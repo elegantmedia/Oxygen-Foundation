@@ -1,0 +1,54 @@
+{
+    "name": "elegantmedia/oxygen-foundation",
+    "type": "library",
+    "description": "Foundation for Oxygen framework projects.",
+    "homepage": "https://github.com/elegantmedia/oxygen-foundation",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Elegant Media",
+            "homepage": "http://www.elegantmedia.com.au",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": "^7.3",
+        "illuminate/http": "^8.0",
+        "illuminate/support": "^8.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^9.3",
+        "squizlabs/php_codesniffer": "^3.5"
+    },
+    "autoload": {
+        "psr-4": {
+            "ElegantMedia\\OxygenFoundation\\": "src"
+        },
+		"files": [
+			"src/functions.php"
+		]
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "ElegantMedia\\OxygenFoundation\\": "tests"
+        }
+    },
+    "scripts": {
+        "test": "phpunit",
+        "check-style": "phpcs src tests",
+        "fix-style": "phpcbf src tests"
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "ElegantMedia\\OxygenFoundation\\OxygenFoundationServiceProvider"
+            ]
+        },
+        "branch-alias": {
+            "dev-master": "1.0-dev"
+        }
+    },
+    "config": {
+        "sort-packages": true
+    }
+}
