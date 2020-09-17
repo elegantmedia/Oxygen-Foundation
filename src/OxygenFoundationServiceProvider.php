@@ -1,9 +1,9 @@
 <?php
 
+namespace ElegantMedia\OxygenFoundation;
 
-namespace ElegantMedia\SimpleRepository;
-
-use ElegantMedia\OxygenFoundation\Responses\Response as BaseResponse;
+use ElegantMedia\OxygenFoundation\Core\OxygenCore;
+use ElegantMedia\OxygenFoundation\Http\Response as BaseResponse;
 use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\ServiceProvider;
@@ -22,10 +22,14 @@ class OxygenFoundationServiceProvider extends ServiceProvider
 
 	public function register()
 	{
+		$this->app->singleton('oxygen', function () {
+			return new OxygenCore();
+		});
+
 		$this->mergeConfigFrom(__DIR__ . '/../config/oxygen.php', 'oxygen');
 		$this->mergeConfigFrom(__DIR__ . '/../config/features.php', 'features');
 
-		$this->registerCustomResponses();
+		// $this->registerCustomResponses();
 	}
 
 	/**
