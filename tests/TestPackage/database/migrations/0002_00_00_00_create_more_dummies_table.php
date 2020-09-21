@@ -3,17 +3,16 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 
-class CreateTestsTable extends Migration
+class CreateMoreDummiesTable extends Migration
 {
 	/**
-	 * Run the migrations.
+	 * Run the database.
 	 *
 	 * @return void
 	 */
 	public function up()
 	{
-		Schema::create('tests', static function(Blueprint $table)
-		{
+		Schema::create('more_dummies', static function (Blueprint $table) {
 			$table->id('id');
 			$table->string('name')->nullable();
 			$table->softDeletes();
@@ -23,12 +22,12 @@ class CreateTestsTable extends Migration
 
 
 	/**
-	 * Reverse the migrations.
+	 * Reverse the database.
 	 *
 	 * @return void
 	 */
 	public function down()
 	{
-		Schema::drop('tests');
+		Schema::drop('more_dummies');
 	}
 }

@@ -1,7 +1,6 @@
 <?php
 namespace ElegantMedia\OxygenFoundation\Core;
 
-
 class OxygenCore
 {
 
@@ -16,5 +15,4 @@ class OxygenCore
 	{
 		$this->extensionManager->load($namespace);
 	}
-
 }

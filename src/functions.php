@@ -12,7 +12,7 @@ if (!function_exists('has_feature')) {
 	 *
 	 * @return \Illuminate\Config\Repository|mixed
 	 */
-	function has_feature($featureSlug)
+	function has_feature($featureSlug): bool
 	{
 		// if the string doesn't start with `features.`, append it
 		if (strpos($featureSlug, 'features.') !== 0) {

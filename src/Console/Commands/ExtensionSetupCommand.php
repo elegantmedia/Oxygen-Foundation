@@ -1,117 +1,183 @@
 <?php
+
 namespace ElegantMedia\OxygenFoundation\Console\Commands;
 
 use ElegantMedia\OxygenFoundation\Console\Commands\Traits\CopiesProjectStubFiles;
-use ElegantMedia\OxygenFoundation\Support\Dir;
+use ElegantMedia\OxygenFoundation\Support\Exceptions\ClassAlreadyExistsException;
+use ElegantMedia\OxygenFoundation\Support\Exceptions\FileInvalidException;
+use ElegantMedia\OxygenFoundation\Support\Filing;
+use ElegantMedia\PHPToolkit\Exceptions\FileSystem\FileNotFoundException;
+use ElegantMedia\PHPToolkit\Exceptions\FileSystem\SectionAlreadyExistsException;
+use ElegantMedia\PHPToolkit\FileEditor;
+use ElegantMedia\PHPToolkit\Reflector;
 use Illuminate\Console\Command;
+use Illuminate\Support\Composer;
 use Illuminate\Support\Facades\File;
-use Symfony\Component\Finder\SplFileInfo;
+use ReflectionException;
+use Symfony\Component\Finder\Exception\DirectoryNotFoundException;
 
 abstract class ExtensionSetupCommand extends Command implements ExtensionSetupInterface
 {
 
 	use CopiesProjectStubFiles;
 
-	// TODO: update route files
-	// TODO: update database seeder
-
-	public function handle()
+	/**
+	 * @throws ClassAlreadyExistsException
+	 * @throws FileNotFoundException
+	 * @throws ReflectionException
+	 * @throws FileInvalidException
+	 */
+	public function handle(): void
 	{
-//		$this->checkSetupVariables();
+		// before setup
+		if (method_exists($this, 'beforeSetup')) {
+			$this->beforeSetup();
+		}
 
-		$this->copyPackageMigrations();
-		$this->copyPackageSeeds();
-		$this->autoPublishTags();
-
-		/*
-		 |-----------------------------------------------------------
-		 | // TODO: if there are extension seeders, add them
-		 |-----------------------------------------------------------
-		 */
-
-		// add to an auto-seed order, with 00x as class name
-		// allow in config to change loading priority
-
-		echo (file_get_contents(base_path('routes/web.php')));
-
+		// migrations
 		if (method_exists($this, 'beforeGeneratingMigrations')) {
 			$this->beforeGeneratingMigrations();
 		}
 
-		if (method_exists($this, 'generateMigrations')) {
-			$this->generateMigrations();
-		}
+		$this->generateExtensionMigrations();
 
 		if (method_exists($this, 'afterGeneratingMigrations')) {
 			$this->afterGeneratingMigrations();
 		}
 
+		// seeders
 		if (method_exists($this, 'beforeGeneratingSeeds')) {
 			$this->beforeGeneratingSeeds();
 		}
 
-		if (method_exists($this, 'generateSeeds')) {
-			$this->generateSeeds();
-		}
+		$this->generateExtensionSeeders();
 
 		if (method_exists($this, 'afterGeneratingSeeds')) {
 			$this->afterGeneratingSeeds();
 		}
 
+		// publish auto-publish tags
+		$this->autoPublishTags();
+
 		if (method_exists($this, 'publishPackageFiles')) {
 			$this->publishPackageFiles();
 		}
 
-		if (method_exists($this, 'updateRouteFiles')) {
-			$this->updateRouteFiles();
+		// update routes from stubs
+		$this->updateRoutesFromStubs();
+
+		$this->composerAutoload();
+
+		// after setup
+		if (method_exists($this, 'afterSetup')) {
+			$this->afterSetup();
 		}
-
-		// reload classes
-		// $this->call('composer:dump-autoload');
 	}
 
-	public function getMigrationSourceFilePaths()
+	/**
+	 *
+	 */
+	protected function composerAutoload(): void
 	{
-		return $this->getFilesFromPackage('database/migrations');
+		// reload classes, but not when testing
+		if (!app()->runningUnitTests()) {
+			/** @var Composer $composer */
+			$composer = app(Composer::class);
+			$composer->dumpAutoloads();
+		}
 	}
 
-	public function getSeedSourceFilePaths()
+
+	/**
+	 * @throws FileNotFoundException
+	 * @throws ReflectionException
+	 */
+	public function updateRoutesFromStubs(): void
 	{
-		return $this->getFilesFromPackage('database/seeders');
+		$filePaths = $this->getFilesFromPackage('stubs/routes');
+
+		foreach ($filePaths as $sourcePath) {
+			$basename = pathinfo($sourcePath, PATHINFO_BASENAME);
+
+			$destinationPath = base_path("routes/{$basename}");
+
+			if (file_exists($destinationPath)) {
+				try {
+					$bytes = FileEditor::appendStubIfSectionNotFound($destinationPath, $sourcePath, null, null, true);
+				} catch (SectionAlreadyExistsException $ex) {
+					if (!$this->confirm(
+						$this->getExtensionDisplayName() . " extension routes are already in `{$basename}`. Add again?",
+						false
+					)) {
+						continue;
+					}
+
+					$bytes = FileEditor::appendStub($destinationPath, $sourcePath);
+				}
+			}
+		}
 	}
 
-	public function copyPackageMigrations()
+	/**
+	 * @throws FileNotFoundException
+	 * @throws ReflectionException
+	 * @throws ClassAlreadyExistsException
+	 * @throws FileInvalidException
+	 */
+	public function generateExtensionMigrations(): void
 	{
 		// By convention, this file should be placed in `src/Console/Commands/`
-		// Migrations will be placed in `database/migrations`
-		// So the logic is to see if files are there in the migrations folder,
-		// find the classes and copy them to the main project's migrations folder.
+		// Migrations will be placed in `database/database`
+		// So the logic is to see if files are there in the database folder,
+		// find the classes and copy them to the main project's database folder.
 		//
 		// Before we do that, we also need to check if those migration classes are already loaded.
 
-		$filePaths = $this->getMigrationSourceFilePaths();
+		$filePaths = $this->getFilesFromPackage('database/migrations');
 
 		foreach ($filePaths as $filePath) {
+			//try {
 			$destinationPath = $this->copyMigrationFile($filePath);
+//			} catch (ClassAlreadyExistsException $e) {
+//				$this->error($e->getMessage());
+//			}
 		}
 	}
 
-	public function copyPackageSeeds()
+
+	/**
+	 * @throws FileNotFoundException
+	 * @throws ReflectionException
+	 * @throws ClassAlreadyExistsException
+	 */
+	public function generateExtensionSeeders(): void
 	{
-		$filePaths = $this->getSeedSourceFilePaths();
+		$filePaths = $this->getFilesFromPackage('publish/database/seeders', true);
 
 		foreach ($filePaths as $filePath) {
 			$destinationPath = $this->copySeedFile($filePath);
-
-			// TODO: add $destinationPath to seeder
 		}
 	}
 
-	protected function getAutoPublishTags(): array
+	/**
+	 * @param $dirSuffix
+	 * @param false $recursive
+	 * @return string[]
+	 * @throws ReflectionException
+	 */
+	protected function getFilesFromPackage($dirSuffix, $recursive = false)
 	{
-		return [
-			'oxygen::auto-publish',
-		];
+		$targetDir = Reflector::classPath($this, './../../../' . $dirSuffix);
+
+		if (!File::isDirectory($targetDir)) {
+			throw new DirectoryNotFoundException("Directory `$targetDir` not found");
+		}
+
+		if ($recursive) {
+			return Filing::allFileNames($targetDir);
+		}
+
+		return Filing::fileNames($targetDir);
 	}
 
 	protected function autoPublishTags(): void
@@ -124,20 +190,10 @@ abstract class ExtensionSetupCommand extends Command implements ExtensionSetupIn
 		}
 	}
 
-
-	protected function getFilesFromPackage($dirSuffix)
+	protected function getAutoPublishTags(): array
 	{
-		$targetDir = \ElegantMedia\OxygenFoundation\Support\File::classPath($this, './../../../'.$dirSuffix);
-
-		if (!File::isDirectory($targetDir)) {
-			return false;
-		}
-
-		$files = File::files($targetDir);
-
-		return array_map(function ($file) {
-			/* @var SplFileInfo $file */
-			return $file->getPathname();
-		}, $files);
+		return [
+			'oxygen::auto-publish',
+		];
 	}
 }

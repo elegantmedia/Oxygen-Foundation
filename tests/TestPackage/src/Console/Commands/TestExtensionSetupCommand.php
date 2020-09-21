@@ -1,7 +1,6 @@
 <?php
 namespace ElegantMedia\OxygenFoundation\TestPackage\Console\Commands;
 
-
 use ElegantMedia\OxygenFoundation\Console\Commands\ExtensionSetupCommand;
 use ElegantMedia\OxygenFoundation\TestPackage\TestPackageServiceProvider;
 
@@ -16,8 +15,13 @@ class TestExtensionSetupCommand extends ExtensionSetupCommand
 		return TestPackageServiceProvider::class;
 	}
 
-	public function getExtensionName(): string
+	public function getExtensionDisplayName(): string
 	{
 		return 'TestExtension';
+	}
+
+	public function getSetupCommandRootPath(): string
+	{
+		// TODO: Implement getSetupCommandRootPath() method.
 	}
 }
