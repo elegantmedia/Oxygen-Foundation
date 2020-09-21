@@ -1,7 +1,7 @@
 <?php
 
 
-namespace ElegantMedia\OxygenFoundation\Responses;
+namespace ElegantMedia\OxygenFoundation\Http;
 
 class Response extends \Illuminate\Http\Response
 {

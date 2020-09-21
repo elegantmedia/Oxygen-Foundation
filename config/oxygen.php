@@ -10,7 +10,7 @@ return [
 		'per_page' => 50,
 	],
 
-	// Standard Date/Time formats
+	// Standard Date/Timer formats
 	'date_format' => 'd/M/Y',
 
 	'date_time_format' => 'd/M/Y h:i A',

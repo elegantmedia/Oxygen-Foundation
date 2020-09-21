@@ -1,9 +1,11 @@
 <?php
 
+namespace ElegantMedia\OxygenFoundation;
 
-namespace ElegantMedia\SimpleRepository;
-
-use ElegantMedia\OxygenFoundation\Responses\Response as BaseResponse;
+use ElegantMedia\OxygenFoundation\Console\Commands\SeedCommand;
+use ElegantMedia\OxygenFoundation\Core\OxygenCore;
+use ElegantMedia\OxygenFoundation\Core\Pathfinder;
+use ElegantMedia\OxygenFoundation\Http\Response as BaseResponse;
 use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\ServiceProvider;
@@ -22,10 +24,22 @@ class OxygenFoundationServiceProvider extends ServiceProvider
 
 	public function register()
 	{
+		$this->app->singleton('oxygen', function () {
+			return new OxygenCore();
+		});
+
+		$this->app->singleton(Pathfinder::class);
+
 		$this->mergeConfigFrom(__DIR__ . '/../config/oxygen.php', 'oxygen');
 		$this->mergeConfigFrom(__DIR__ . '/../config/features.php', 'features');
 
 		$this->registerCustomResponses();
+		$this->registerCommands();
+	}
+
+	protected function registerCommands(): void
+	{
+		$this->commands(SeedCommand::class);
 	}
 
 	/**
@@ -80,7 +94,7 @@ class OxygenFoundationServiceProvider extends ServiceProvider
 		Response::macro('apiErrorUnauthorized', function (
 			$message = 'Authentication failed. Try to login again.',
 			$responseCode = BaseResponse::HTTP_UNAUTHORIZED
-) {
+		) {
 
 			return Response::json([
 				'message' => $message,
