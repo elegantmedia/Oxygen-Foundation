@@ -53,6 +53,8 @@ class ExtensionSetupCommandTest extends TestCase
 		Dir::cleanDirectoryByExtension($this->pathfinder->dbAutoSeedersDir(), 'php');
 		Dir::cleanDirectoryByExtension(app_path('Entities/Dummies'), 'php');
 
+		$this->withoutMockingConsoleOutput();
+
 		$this->restoreRoutesFile();
 	}
 
@@ -75,6 +77,7 @@ class ExtensionSetupCommandTest extends TestCase
 	protected function restoreRoutesFile()
 	{
 		// restore file from backup
+		File::ensureDirectoryExists(base_path('routes'));
 		File::copy(__DIR__.'/../laravel/routes/web.php', base_path('routes/web.php'));
 	}
 
@@ -85,14 +88,12 @@ class ExtensionSetupCommandTest extends TestCase
 	 */
 	public function testPackageCopiesMigrations(): void
 	{
-		// /** @var ExtensionSetupCommand $cmd */
-		// $cmd = app(TestExtensionSetupCommand::class);
-
 		$src = Path::canonical(__DIR__ . '/../TestPackage/database/migrations');
 
 		$dest = $this->pathfinder->dbMigrationsDir();
 
 		$fileCount = $this->getFileCountOnFolder($src);
+
 		$before = $this->getFileCountOnFolder($dest);
 
 		$this->artisan('setup:extension:test-extension');
@@ -100,8 +101,8 @@ class ExtensionSetupCommandTest extends TestCase
 		$after = $this->getFileCountOnFolder($dest);
 
 		$this->assertEquals(
-			$after,
 			($before + $fileCount),
+			$after,
 			"{$fileCount} Migration file(s) not copied from `$src` to `$dest`."
 		);
 	}
@@ -121,7 +122,7 @@ class ExtensionSetupCommandTest extends TestCase
 
 		$after = $this->getFileCountOnFolder(database_path('seeders'), true);
 
-		$this->assertEquals($after, ($before + $fileCount), 'Seeders not copied to destination.');
+		$this->assertEquals(($before + $fileCount), $after, 'Seeders not copied to destination.');
 	}
 
 	/**

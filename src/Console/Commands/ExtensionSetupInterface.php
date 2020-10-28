@@ -10,5 +10,4 @@ interface ExtensionSetupInterface
 
 	public function getExtensionDisplayName() : string;
 
-	public function getSetupCommandRootPath() : string;
 }

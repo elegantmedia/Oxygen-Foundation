@@ -1,5 +1,5 @@
 <?php
-namespace ElegantMedia\OxygenFoundation\Http\Traits;
+namespace ElegantMedia\OxygenFoundation\Http\Traits\Api;
 
 use Illuminate\Support\Arr;
 
