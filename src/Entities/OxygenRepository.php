@@ -1,7 +1,7 @@
 <?php
 
 
-namespace ElegantMedia\OxygenFoundation\Entitities;
+namespace ElegantMedia\OxygenFoundation\Entities;
 
 use ElegantMedia\SimpleRepository\SimpleBaseRepository;
 use Illuminate\Database\Eloquent\Model;

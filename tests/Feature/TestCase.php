@@ -4,6 +4,7 @@
 namespace ElegantMedia\OxygenFoundation\Tests\Feature;
 
 use ElegantMedia\OxygenFoundation\Core\Pathfinder;
+use ElegantMedia\OxygenFoundation\Facades\Navigator;
 use ElegantMedia\OxygenFoundation\OxygenFoundationServiceProvider;
 use ElegantMedia\OxygenFoundation\TestPackage\TestPackageServiceProvider;
 
@@ -24,6 +25,13 @@ class TestCase extends \Orchestra\Testbench\TestCase
 		return [
 			OxygenFoundationServiceProvider::class,
 			TestPackageServiceProvider::class
+		];
+	}
+
+	protected function getPackageAliases($app)
+	{
+		return [
+			'Navigator' => Navigator::class,
 		];
 	}
 }

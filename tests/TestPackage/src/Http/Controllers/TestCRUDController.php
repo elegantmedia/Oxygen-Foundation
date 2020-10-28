@@ -3,12 +3,11 @@
 
 namespace ElegantMedia\OxygenFoundation\TestPackage\Http\Controllers;
 
-use ElegantMedia\OxygenFoundation\Http\Controllers\WebCRUDController;
+use App\Http\Controllers\Manage\ManageBaseController;
 use ElegantMedia\OxygenFoundation\Http\Traits\Web\CanCRUD;
 use ElegantMedia\OxygenFoundation\TestPackage\Entities\Testers\TestersRepository;
-use Illuminate\Routing\Controller;
 
-class TestCRUDController extends WebCRUDController
+class TestCRUDController extends ManageBaseController
 {
 
 	use CanCRUD;
@@ -25,5 +24,4 @@ class TestCRUDController extends WebCRUDController
 
 		$this->isDestroyAllowed = false;
 	}
-
 }

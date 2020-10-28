@@ -62,7 +62,19 @@ trait CanCreate
 
 	protected function getCreateViewName()
 	{
-		return $this->getVendorPrefixedViewName('create');
+		$view = $this->getVendorPrefixedViewName('create');
+
+		if (view()->exists($view)) {
+			return $view;
+		}
+
+		$view = $this->getVendorPrefixedViewName('form');
+
+		if (view()->exists($view)) {
+			return $view;
+		}
+
+		throw new FileNotFoundException("View $view not found");
 	}
 
 	protected function getRouteToRedirectToAfterStore()

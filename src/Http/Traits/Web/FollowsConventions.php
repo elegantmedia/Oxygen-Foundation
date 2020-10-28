@@ -1,16 +1,14 @@
 <?php
 
-
-namespace ElegantMedia\OxygenFoundation\Http\Controllers;
+namespace ElegantMedia\OxygenFoundation\Http\Traits\Web;
 
 use ElegantMedia\OxygenFoundation\Entitities\OxygenRepository;
 use ElegantMedia\PHPToolkit\Arr;
-use ElegantMedia\SimpleRepository\SimpleBaseRepository;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
-abstract class WebCRUDController extends \Illuminate\Routing\Controller
+trait FollowsConventions
 {
 
 	protected $resourceEntityName;
@@ -113,7 +111,9 @@ abstract class WebCRUDController extends \Illuminate\Routing\Controller
 		]);
 
 		if (!\Illuminate\Support\Facades\Route::has($route)) {
-			throw new \InvalidArgumentException("Route `$route` is not defined. Create this route or return a valid route from getIndexRouteName()");
+			throw new \InvalidArgumentException(
+				"Route `$route` is not defined. Create this route or return a valid route from getIndexRouteName()"
+			);
 		}
 
 		$this->indexRouteName = $route;

@@ -3,7 +3,9 @@
 
 namespace ElegantMedia\OxygenFoundation\Http\Traits\Web;
 
+use ElegantMedia\PHPToolkit\Exceptions\FileSystem\FileNotFoundException;
 use Illuminate\Contracts\View\Factory;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -70,6 +72,23 @@ trait CanEdit
 
 	protected function getEditViewName()
 	{
-		return $this->getVendorPrefixedViewName('edit');
+		$view = $this->getVendorPrefixedViewName('edit');
+
+		if (view()->exists($view)) {
+			return $view;
+		}
+
+		$view = $this->getVendorPrefixedViewName('form');
+
+		if (view()->exists($view)) {
+			return $view;
+		}
+
+		throw new FileNotFoundException("View $view not found");
+	}
+
+	protected function getRouteToRedirectToAfterUpdate()
+	{
+		return $this->getIndexRouteName();
 	}
 }

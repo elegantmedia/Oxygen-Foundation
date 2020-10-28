@@ -16,8 +16,8 @@ trait CanBrowse
 	{
 		$data = [
 			'pageTitle' => $this->getResourcePluralName(),
-			'allItems' => $this->dataRepo->search(),
-			'isDestroyingEntityAllowed' => $this->isDestroyingEntityAllowed(),
+			'allItems' => $this->repo->searchPaginate(),
+			'isDestroyingEntityAllowed' => $this->isDestroyAllowed(),
 		];
 
 		$viewName = $this->getIndexViewName();
@@ -29,5 +29,4 @@ trait CanBrowse
 	{
 		return $this->getVendorPrefixedViewName('index');
 	}
-
 }
