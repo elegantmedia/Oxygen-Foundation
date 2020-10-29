@@ -1,6 +1,5 @@
 <?php
 
-
 namespace ElegantMedia\OxygenFoundation\Http\Traits\Web;
 
 trait CanCRUD
@@ -11,4 +10,5 @@ trait CanCRUD
 	use CanCreate;
 	use CanEdit;
 	use CanDestroy;
+	
 }

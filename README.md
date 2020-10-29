@@ -37,6 +37,28 @@ standard_date($date);
 standard_time($date);
 ```
 
+### Models
+
+Make a Model Searchable
+
+``` php
+use Laravel\Scout\Searchable;
+use Illuminate\Database\Eloquent\Model;
+
+class Car extends Model implements KeywordSearchable
+{
+    use Searchable;
+
+	public function getSearchableFields(): array
+	{
+		return [
+			'make',
+			'model',
+		];
+	}
+}
+```
+
 ### Components
 
 #### Menu Navigator
