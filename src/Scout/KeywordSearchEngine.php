@@ -55,7 +55,7 @@ class KeywordSearchEngine extends \Laravel\Scout\Engines\Engine
 			// loop through all columns
 			foreach ($model->getSearchableFields() as $columnName) {
 				foreach ($searchTerms as $searchTerm) {
-					$q->orWhere($columnName, 'LIKE', '%'.$builder->query.'%');
+					$q->orWhere($columnName, 'LIKE', '%'.$searchTerm.'%');
 				}
 			}
 		});
@@ -72,8 +72,6 @@ class KeywordSearchEngine extends \Laravel\Scout\Engines\Engine
 
 		return $query->paginate();
 	}
-
-
 
 	/**
 	 * Pluck and return the primary keys of the given results.

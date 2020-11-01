@@ -9,5 +9,4 @@ interface ExtensionSetupInterface
 	public function getExtensionServiceProvider() : string;
 
 	public function getExtensionDisplayName() : string;
-
 }

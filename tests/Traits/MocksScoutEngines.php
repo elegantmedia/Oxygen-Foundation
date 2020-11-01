@@ -3,11 +3,14 @@
 namespace Tests\Traits;
 
 use ElegantMedia\OxygenFoundation\Scout\KeywordSearchEngine;
+use Illuminate\Foundation\Testing\Concerns\InteractsWithContainer;
 use Laravel\Scout\EngineManager;
 use Mockery\MockInterface;
 
 trait MocksScoutEngines
 {
+
+	use InteractsWithContainer;
 
 	protected function mockScoutKeywordEngine(): MockInterface
 	{
@@ -21,5 +24,4 @@ trait MocksScoutEngines
 
 		return $engineMock;
 	}
-
 }

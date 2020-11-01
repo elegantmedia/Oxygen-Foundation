@@ -23,5 +23,4 @@ class OxygenCore
 	{
 		return app()->make(self::getUserClass());
 	}
-	
 }

@@ -10,5 +10,4 @@ trait CanCRUD
 	use CanCreate;
 	use CanEdit;
 	use CanDestroy;
-	
 }
