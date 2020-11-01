@@ -10,6 +10,10 @@ trait RegisterSchemaMacros
 
 	protected function registerSchemaMacros(): void
 	{
+		Blueprint::macro('prefix', function ($prefix, $field) {
+			return Arr::implodeIgnoreEmpty('_', [$prefix, $field]);
+		});
+
 		$this->registerLocationMacro();
 		$this->registerPlaceMacro();
 		$this->registerFileMacro();
@@ -103,10 +107,5 @@ trait RegisterSchemaMacros
 			$this->dropColumn($this->prefix($prefix, 'file_size_bytes'));
 			$this->dropColumn($this->prefix($prefix, 'uploaded_by_user_id'));
 		});
-	}
-
-	protected function prefix($prefix, $field): string
-	{
-		return Arr::implodeIgnoreEmpty('_', [$prefix, $field]);
 	}
 }
