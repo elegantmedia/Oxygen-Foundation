@@ -35,137 +35,6 @@ abstract class ExtensionInstallCommand extends Command implements ExtensionSetup
 
 	protected $requireNpmDevPackages = [];
 
-	protected function updateNpmPackages()
-	{
-		if (count($this->requiredNpmPackages) === 0) {
-			return;
-		}
-
-		foreach ($this->requiredNpmPackages as $package => $version) {
-			$this->addNpmPackage($package, $version, false);
-		}
-	}
-
-	protected function updateNpmDevPackages()
-	{
-		if (count($this->requiredNpmDevPackages) === 0) {
-			return;
-		}
-
-		foreach ($this->requiredNpmDevPackages as $package => $version) {
-			$this->addNpmPackage($package, $version, true);
-		}
-	}
-
-	protected function addNpmPackage($package, $version, $dev = true)
-	{
-		if (!file_exists(base_path('package.json'))) {
-			return;
-		}
-
-		$configurationKey = $dev ? 'devDependencies' : 'dependencies';
-
-		$packages = json_decode(file_get_contents(base_path('package.json')), true);
-
-		// overwrite the key, so if the version is changed, it will update it
-		// TODO: maybe only allow upgrading or restricting versions?
-		$packages[$configurationKey][$package] = $version;
-
-		ksort($packages[$configurationKey]);
-
-		file_put_contents(
-			base_path('package.json'),
-			json_encode($packages, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT).PHP_EOL
-		);
-	}
-
-	protected function installComposerRequireDevDependencies(): void
-	{
-		foreach ($this->composerRequire as $require) {
-			$this->installComposerDependency($require);
-		}
-	}
-
-	protected function installComposerRequireDependencies(): void
-	{
-		foreach ($this->composerRequireDev as $require) {
-			$this->installComposerDependency($require, true);
-		}
-	}
-
-	protected function installComposerDependency($package, $dev = null)
-	{
-		$this->info("Installing `$package`...");
-
-		$command = ['composer', 'require', $package];
-		if ($dev) {
-			$command[] = '--dev';
-		}
-
-		(new Process($command, base_path()))
-			->setTimeout(null)
-			->run(function ($type, $output) {
-				$this->output->write($output);
-			});
-	}
-
-	protected function addDontDiscoverPackages(): void
-	{
-		if (count($this->composerDontDiscover) === 0) {
-			return;
-		}
-
-		$composerPath = base_path('composer.json');
-
-		if (!file_exists($composerPath)) {
-			throw new FileNotFoundException("$composerPath not found");
-			return;
-		}
-
-		$composer = json_decode(file_get_contents($composerPath), true);
-
-		if (!isset($composer['extra'])) {
-			$composer['extra'] = [];
-		}
-		if (!isset($composer['extra']['laravel'])) {
-			$composer['extra']['laravel'] = [];
-		}
-		if (!isset($composer['extra']['laravel']['dont-discover'])) {
-			$composer['extra']['laravel']['dont-discover'] = [];
-		}
-
-		$composer['extra']['laravel']['dont-discover'] = array_unique(array_merge(
-			$composer['extra']['laravel']['dont-discover'],
-			$this->composerDontDiscover
-		));
-
-		file_put_contents(
-			$composerPath,
-			json_encode($composer, JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT)
-		);
-	}
-
-	protected function installRequiredDependencies(): bool
-	{
-		if (!$this->hasOption('install_dependencies')) {
-			return false;
-		}
-
-		if (!filter_var($this->option('install_dependencies'), FILTER_VALIDATE_BOOLEAN)) {
-			return false;
-		}
-
-		$this->addDontDiscoverPackages();
-		$this->installComposerRequireDependencies();
-		$this->installComposerRequireDevDependencies();
-
-		$this->appendServiceProviders();
-
-		$this->updateNpmPackages();
-		$this->updateNpmDevPackages();
-
-		return true;
-	}
 
 	/**
 	 * @throws ClassAlreadyExistsException
@@ -228,12 +97,210 @@ abstract class ExtensionInstallCommand extends Command implements ExtensionSetup
 		}
 	}
 
+	protected function autoPublishTags($force = true): void
+	{
+		foreach ($this->getAutoPublishTags() as $tag) {
+			$this->call('vendor:publish', [
+				'--provider' => $this->getExtensionServiceProvider(),
+				'--tag' => $tag,
+				'--force' => $force,
+			]);
+		}
+	}
+
+	protected function getAutoPublishTags(): array
+	{
+		return [
+			'oxygen::auto-publish',
+		];
+	}
+
+	/**
+	 * @return bool
+	 * @throws FileNotFoundException
+	 * @throws \JsonException
+	 */
+	protected function installRequiredDependencies(): bool
+	{
+		if (!$this->hasOption('install_dependencies')) {
+			return false;
+		}
+
+		if (!filter_var($this->option('install_dependencies'), FILTER_VALIDATE_BOOLEAN)) {
+			return false;
+		}
+
+		$this->addDontDiscoverPackages();
+		$this->installComposerRequireDependencies();
+		$this->installComposerRequireDevDependencies();
+
+		$this->appendServiceProviders();
+
+		$this->updateNpmPackages();
+		$this->updateNpmDevPackages();
+
+		return true;
+	}
+
+	/**
+	 * @throws FileNotFoundException
+	 * @throws \JsonException
+	 */
+	protected function addDontDiscoverPackages(): void
+	{
+		if (count($this->composerDontDiscover) === 0) {
+			return;
+		}
+
+		$composerPath = base_path('composer.json');
+
+		if (!file_exists($composerPath)) {
+			throw new FileNotFoundException("$composerPath not found");
+			return;
+		}
+
+		$composer = json_decode(file_get_contents($composerPath), true);
+
+		if (!isset($composer['extra'])) {
+			$composer['extra'] = [];
+		}
+		if (!isset($composer['extra']['laravel'])) {
+			$composer['extra']['laravel'] = [];
+		}
+		if (!isset($composer['extra']['laravel']['dont-discover'])) {
+			$composer['extra']['laravel']['dont-discover'] = [];
+		}
+
+		$composer['extra']['laravel']['dont-discover'] = array_unique(array_merge(
+			$composer['extra']['laravel']['dont-discover'],
+			$this->composerDontDiscover
+		));
+
+		file_put_contents(
+			$composerPath,
+			json_encode($composer, JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT)
+		);
+	}
+
+	/**
+	 *
+	 * Install Required Pacakges
+	 *
+	 */
+	protected function installComposerRequireDevDependencies(): void
+	{
+		$this->installComposerDependencies($this->composerRequire);
+	}
+
+	/**
+	 *
+	 * Install Required Dev Packages
+	 *
+	 */
+	protected function installComposerRequireDependencies(): void
+	{
+		$this->installComposerDependencies($this->composerRequireDev, true);
+	}
+
+	/**
+	 *
+	 * Install a list of composer dependencies
+	 *
+	 * @param $packages
+	 * @param false $dev
+	 */
+	protected function installComposerDependencies($packages, $dev = false): void
+	{
+		if (!count($packages)) {
+			return;
+		}
+
+		$this->info('Installing ' . implode(' ', $packages) . '...');
+
+		$command = $this->composerRequireDev;
+		array_unshift($command, 'composer', 'require');
+
+		if ($dev) {
+			$command[] = '--dev';
+		}
+
+		(new Process($command, base_path()))
+			->setTimeout(null)
+			->run(function ($type, $output) {
+				$this->output->write($output);
+			});
+	}
+
+	/**
+	 *
+	 * Update NPM Packages
+	 *
+	 */
+	protected function updateNpmPackages(): void
+	{
+		if (count($this->requiredNpmPackages) === 0) {
+			return;
+		}
+
+		foreach ($this->requiredNpmPackages as $package => $version) {
+			$this->addNpmPackage($package, $version, false);
+		}
+	}
+
+	/**
+	 *
+	 * Update NPM Dev Packages
+	 *
+	 */
+	protected function updateNpmDevPackages(): void
+	{
+		if (count($this->requiredNpmDevPackages) === 0) {
+			return;
+		}
+
+		foreach ($this->requiredNpmDevPackages as $package => $version) {
+			$this->addNpmPackage($package, $version, true);
+		}
+	}
+
+	/**
+	 *
+	 * Add an NPM Package
+	 *
+	 * @param $package
+	 * @param $version
+	 * @param bool $dev
+	 */
+	protected function addNpmPackage($package, $version, $dev = true): void
+	{
+		if (!file_exists(base_path('package.json'))) {
+			return;
+		}
+
+		$configurationKey = $dev ? 'devDependencies' : 'dependencies';
+
+		$packages = json_decode(file_get_contents(base_path('package.json')), true);
+
+		// overwrite the key, so if the version is changed, it will update it
+		// TODO: maybe only allow upgrading or restricting versions?
+		$packages[$configurationKey][$package] = $version;
+
+		ksort($packages[$configurationKey]);
+
+		file_put_contents(
+			base_path('package.json'),
+			json_encode($packages, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT).PHP_EOL
+		);
+	}
+
+
 	/**
 	 * Install the Fortify service providers in the application configuration file.
 	 *
 	 * @return void
+	 * @throws FileNotFoundException
 	 */
-	protected function appendServiceProviders()
+	protected function appendServiceProviders(): void
 	{
 		if (count($this->requiredServiceProviders) === 0) {
 			return;
@@ -264,6 +331,8 @@ abstract class ExtensionInstallCommand extends Command implements ExtensionSetup
 	}
 
 	/**
+	 *
+	 * Composer AutoLoad
 	 *
 	 */
 	protected function composerAutoload(): void
@@ -316,7 +385,6 @@ abstract class ExtensionInstallCommand extends Command implements ExtensionSetup
 	/**
 	 * @throws FileNotFoundException
 	 * @throws ReflectionException
-	 * @throws ClassAlreadyExistsException
 	 * @throws FileInvalidException
 	 */
 	public function generateExtensionMigrations(): void
@@ -384,23 +452,5 @@ abstract class ExtensionInstallCommand extends Command implements ExtensionSetup
 		}
 
 		return Filing::fileNames($targetDir);
-	}
-
-	protected function autoPublishTags($force = true): void
-	{
-		foreach ($this->getAutoPublishTags() as $tag) {
-			$this->call('vendor:publish', [
-				'--provider' => $this->getExtensionServiceProvider(),
-				'--tag' => $tag,
-				'--force' => $force,
-			]);
-		}
-	}
-
-	protected function getAutoPublishTags(): array
-	{
-		return [
-			'oxygen::auto-publish',
-		];
 	}
 }
