@@ -4,6 +4,7 @@ namespace ElegantMedia\OxygenFoundation\Support;
 
 use ElegantMedia\OxygenFoundation\Exceptions\TokenGenerationException;
 use ElegantMedia\PHPToolkit\Text;
+use Illuminate\Database\Eloquent\Model;
 
 class TokenGenerator
 {
