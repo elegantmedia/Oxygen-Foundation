@@ -321,7 +321,7 @@ abstract class ExtensionInstallCommand extends Command implements ExtensionSetup
 
 		array_unshift($shortlisted, 'App\Providers\RouteServiceProvider::class');
 
-		$append = implode(','.PHP_EOL."\t\t", $shortlisted);
+		$append = implode(','.PHP_EOL."\t\t", $shortlisted) . ",";
 
 		FileEditor::findAndReplace(
 			$path,
