@@ -120,6 +120,25 @@ $navItem->setIconClass('fas fa-users');
 
 // Set Item Order
 $navItem->setOrder(2);
+
+// Set Item ID (useful if you need to fetch the same item later)
+// By default, the ID will be the URL
+$navItem->setId('my-unique-id-1234');
+```
+
+Hide Menu Items
+
+You can explicitly hide menu items from all users by marking an item as hidden. Or you can use the Navigator class.
+
+``` php
+// Get the Navigator instance
+$navigator = \Navigator::get();
+
+// Hide an item from the default menu. You have to pass the Item ID, which is the URL by default.
+\Navigator::hideItem('/projects');
+
+// Hiden an item from another menu
+\Navigator::hideItem('/settings', 'second-menu-name');
 ```
 
 Example on how to render Navigation within a Blade template
@@ -127,7 +146,7 @@ Example on how to render Navigation within a Blade template
 ``` php
 <ul>
     @foreach (\Navigator::getNavBar('default')->items() as $item)
-        @if ($item->userAllowedToSee())
+        @if ($item->isUserAllowedToSee())
             <li>
                 @if ($item->hasUrl())
                     <a href="{{ $item->getUrl() }}">

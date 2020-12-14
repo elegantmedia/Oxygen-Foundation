@@ -5,12 +5,14 @@ namespace ElegantMedia\OxygenFoundation\Navigation;
 use ElegantMedia\PHPToolkit\Types\HasAttributes;
 use Illuminate\Contracts\Support\Arrayable;
 
+/* @property id string Unique ID of the NavItem  */
 /* @property $text string Nav Item displayed text */
 /* @property $class string Get  */
 /* @property $icon_class string Icon class for the item  */
 /* @property $url string URL for the item  */
 /* @property $resource string  */
 /* @property $order int  */
+/* @property $hidden boolean Is hidden? */
 /* @property $permission string  */
 class NavItem implements Arrayable
 {
@@ -29,6 +31,10 @@ class NavItem implements Arrayable
 
 		if (!isset($this->attributes['order'])) {
 			$this->order = 0;
+		}
+
+		if (!isset($this->attributes['hidden'])) {
+			$this->hidden = false;
 		}
 	}
 
@@ -53,11 +59,20 @@ class NavItem implements Arrayable
 		return \Illuminate\Support\Facades\Route::has($this->resource);
 	}
 
+	public function userAllowedToSee(): bool
+	{
+		return $this->isUserAllowedToSee();
+	}
+
 	/**
 	 * @return bool
 	 */
-	public function userAllowedToSee(): bool
+	public function isUserAllowedToSee(): bool
 	{
+		if ($this->isHidden()) {
+			return false;
+		}
+
 		$permission = $this->getPermission();
 
 		// if there's no permission, allow anyone to see
@@ -91,12 +106,14 @@ class NavItem implements Arrayable
 	public function toArray(): array
 	{
 		return [
+			'id' => $this->id,
 			'text' => $this->text,
 			'url' => $this->url,
 			'resource' => $this->resource,
 			'class' => $this->class,
 			'order' => $this->order,
 			'permission' => $this->permission,
+			'hidden' => $this->hidden,
 		];
 	}
 
@@ -241,11 +258,33 @@ class NavItem implements Arrayable
 		return null;
 	}
 
+	public function getId()
+	{
+		// return the unique ID for function
+		if ($this->id) {
+			return $this->id;
+		}
+
+		return $this->getUrl();
+	}
+
 	/**
 	 * @return null|string
 	 */
 	public function getClass()
 	{
 		return $this->class;
+	}
+
+	public function setHidden($hidden = true)
+	{
+		$this->hidden = $hidden;
+
+		return $this;
+	}
+
+	public function isHidden()
+	{
+		return $this->hidden;
 	}
 }

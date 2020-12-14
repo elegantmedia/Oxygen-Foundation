@@ -65,6 +65,13 @@ class NavBar
 		return $sorted;
 	}
 
+	public function getItem($itemId)
+	{
+		return $this->items->first(function ($item) use ($itemId) {
+			return $item->getId() === $itemId;
+		});
+	}
+
 	/**
 	 * @param string $name
 	 *

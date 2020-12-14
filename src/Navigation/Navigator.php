@@ -94,6 +94,25 @@ class Navigator
 
 	/**
 	 *
+	 * Mark a menu item as hidden, so they won't appear
+	 *
+	 * @param $itemId
+	 * @param string $navBarName
+	 */
+	public function hideItem($itemId, $navBarName = self::DEFAULT_NAME): void
+	{
+		$navBar = $this->getNavBar($navBarName);
+
+		$navItem = $navBar->getItem($itemId);
+
+		if ($navItem) {
+			$navItem->setHidden(true);
+		}
+	}
+
+
+	/**
+	 *
 	 * Get list of items for a Requested NavBar
 	 *
 	 * @param string $navBarName
