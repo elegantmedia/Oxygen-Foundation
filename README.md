@@ -1,5 +1,8 @@
 # Oxygen Foundation
 
+[![Latest Version on Packagist][ico-version]][link-packagist]
+[![Software License][ico-license]](LICENSE.md)
+
 ## Install
 
 Install via Composer
@@ -175,3 +178,8 @@ Please see [CONTRIBUTING](CONTRIBUTING.md) and for details.
 The MIT License (MIT). Please see [License File](LICENSE.md) for more information.
 
 Copyright (c) 2020 Elegant Media.
+
+[ico-version]: https://img.shields.io/packagist/v/elegantmedia/oxygen-foundation.svg?style=flat-square
+[ico-license]: https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square
+
+[link-packagist]: https://packagist.org/packages/elegantmedia/oxygen-foundation
