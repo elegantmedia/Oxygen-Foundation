@@ -14,7 +14,7 @@
     "require": {
         "php": "^7.3",
         "ext-json": "*",
-        "elegantmedia/laravel-simple-repository": "^1.0",
+        "elegantmedia/laravel-simple-repository": "^2.0",
         "elegantmedia/php-toolkit": "^1.0",
         "illuminate/console": "^8.0",
         "illuminate/database": "^8.0",
