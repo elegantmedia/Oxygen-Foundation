@@ -3,11 +3,11 @@
 
 namespace ElegantMedia\OxygenFoundation\Http\Traits\Web;
 
+use ElegantMedia\PHPToolkit\Exceptions\FileSystem\FileNotFoundException;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
-use InvalidArgumentException;
 
 trait CanCreate
 {
@@ -22,7 +22,7 @@ trait CanCreate
 	{
 		$data = [
 			'pageTitle' => $this->getCreatePageTitle(),
-			'entity' => $this->model,
+			'entity' => $this->getModel(),
 		];
 
 		$viewName = $this->getCreateViewName();
