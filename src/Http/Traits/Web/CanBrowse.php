@@ -8,6 +8,19 @@ trait CanBrowse
 
 	/**
 	 *
+	 * Index Results filter. Override this method to customise the results
+	 *
+	 * @return \ElegantMedia\SimpleRepository\Search\Filterable
+	 */
+	protected function getIndexFilter(): \ElegantMedia\SimpleRepository\Search\Filterable
+	{
+		$filter = $this->repo->newSearchFilter(true);
+
+		return $filter;
+	}
+
+	/**
+	 *
 	 * Index method of the controller
 	 *
 	 * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
@@ -16,7 +29,7 @@ trait CanBrowse
 	{
 		$data = [
 			'pageTitle' => $this->getResourcePluralName(),
-			'allItems' => $this->repo->searchPaginate(),
+			'allItems' => $this->repo->search($this->getIndexFilter()),
 			'isDestroyingEntityAllowed' => $this->isDestroyAllowed(),
 		];
 

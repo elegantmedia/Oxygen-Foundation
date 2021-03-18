@@ -4,6 +4,7 @@ namespace ElegantMedia\OxygenFoundation\Http\Traits\Web;
 
 use ElegantMedia\OxygenFoundation\Entitities\OxygenRepository;
 use ElegantMedia\PHPToolkit\Arr;
+use ElegantMedia\SimpleRepository\Search\Filterable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -130,5 +131,15 @@ trait FollowsConventions
 
 		// save and return model
 		return $this->repo->fillModelFromRequest($request, $id);
+	}
+
+	/**
+	 * @param bool $withDefaults
+	 *
+	 * @return Filterable
+	 */
+	protected function newSearchFilter($withDefaults = true): Filterable
+	{
+		return $this->repo->newSearchFilter($withDefaults);
 	}
 }
