@@ -20,6 +20,7 @@ trait CanEdit
 	 * @param $id
 	 *
 	 * @return Factory|View
+	 * @throws FileNotFoundException
 	 */
 	public function edit($id)
 	{
