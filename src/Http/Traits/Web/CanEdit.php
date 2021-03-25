@@ -68,7 +68,7 @@ trait CanEdit
 	 */
 	protected function getEditPageTitle(Model $model): string
 	{
-		return 'Edit ' . $this->getResourceSingularName();
+		return 'Edit ' . $this->getResourceSingularTitle();
 	}
 
 	protected function getEditViewName()

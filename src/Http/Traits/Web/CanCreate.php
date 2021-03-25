@@ -57,7 +57,7 @@ trait CanCreate
 
 	protected function getCreatePageTitle()
 	{
-		return 'Add New ' . $this->getResourceSingularName();
+		return 'Add New ' . $this->getResourceSingularTitle();
 	}
 
 	protected function getCreateViewName()

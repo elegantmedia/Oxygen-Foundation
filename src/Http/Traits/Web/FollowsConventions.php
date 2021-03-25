@@ -44,6 +44,11 @@ trait FollowsConventions
 		return (string) Str::of($this->getResourceEntityName())->singular()->studly();
 	}
 
+	public function getResourceSingularTitle(): string
+	{
+		return (string) Str::of($this->getResourceEntityName())->singular()->title();
+	}
+
 	public function getResourcePluralName(): string
 	{
 		return Str::pluralStudly($this->getResourceEntityName());

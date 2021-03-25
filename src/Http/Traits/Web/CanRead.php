@@ -37,7 +37,7 @@ trait CanRead
 	 */
 	protected function getShowPageTitle(Model $model): string
 	{
-		return 'View ' . $this->getResourceSingularName();
+		return 'View ' . $this->getResourceSingularTitle();
 	}
 
 	/**
