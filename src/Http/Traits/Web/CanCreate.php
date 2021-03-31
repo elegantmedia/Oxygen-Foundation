@@ -47,7 +47,7 @@ trait CanCreate
 
 		$messages = null;
 		if (method_exists($this->getModel(), 'getCreateValidationMessages')) {
-			$messages = $this->getModel()->getValidationMessages();
+			$messages = $this->getModel()->getCreateValidationMessages();
 		}
 
 		$entity = $this->storeOrUpdateRequest($request, null, $rules, $messages);
