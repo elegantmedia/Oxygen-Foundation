@@ -87,21 +87,23 @@ trait FollowsConventions
 	 */
 	protected function getViewsVendorName()
 	{
-		if (empty($this->viewsVendorName)) {
-			throw new \InvalidArgumentException('`$viewsVendorName` is not set.');
-		}
-
 		return $this->viewsVendorName;
 	}
 
 	protected function getVendorPrefixedViewName($suffix): string
 	{
 		$suffix = Arr::implodeIgnoreEmpty('.', [
-			$this->resourcePrefix,
+			$this->getResourcePrefix(),
 			$suffix,
 		]);
 
-		return $this->getViewsVendorName().'::'.$suffix;
+		$vendorName = $this->getViewsVendorName();
+
+		if (!empty($vendorName)) {
+			return $vendorName.'::'.$suffix;
+		}
+
+		return $suffix;
 	}
 
 	protected function getIndexRouteName($suffix = 'index'): string
@@ -111,7 +113,7 @@ trait FollowsConventions
 		}
 
 		$route = Arr::implodeIgnoreEmpty('.', [
-			$this->resourcePrefix,
+			$this->getResourcePrefix(),
 			$this->getResourceKebabName(),
 			$suffix,
 		]);

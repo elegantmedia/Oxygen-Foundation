@@ -29,11 +29,22 @@ trait CanEdit
 		$data = [
 			'pageTitle' => $this->getEditPageTitle($entity),
 			'entity' => $entity,
+			'form' => $this->getEditForm($entity),
 		];
 
 		$viewName = $this->getEditViewName();
 
 		return view($viewName, $data);
+	}
+
+	/**
+	 * @param null $entity
+	 *
+	 * @return array
+	 */
+	protected function getEditForm($entity = null)
+	{
+		return null;
 	}
 
 	/**

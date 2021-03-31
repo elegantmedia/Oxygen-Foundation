@@ -23,11 +23,22 @@ trait CanCreate
 		$data = [
 			'pageTitle' => $this->getCreatePageTitle(),
 			'entity' => $this->getModel(),
+			'form' => $this->getCreateForm($this->getModel()),
 		];
 
 		$viewName = $this->getCreateViewName();
 
 		return view($viewName, $data);
+	}
+
+	/**
+	 * @param null $entity
+	 *
+	 * @return array
+	 */
+	protected function getCreateForm($entity = null)
+	{
+		return null;
 	}
 
 	/**
