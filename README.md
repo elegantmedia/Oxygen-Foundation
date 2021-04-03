@@ -138,10 +138,10 @@ You can explicitly hide menu items from all users by marking an item as hidden. 
 $navigator = \Navigator::get();
 
 // Hide an item from the default menu. You have to pass the Item ID, which is the URL by default.
-\Navigator::hideItem('/projects');
+\Navigator::hideItem(url('/projects'));
 
 // Hiden an item from another menu
-\Navigator::hideItem('/settings', 'second-menu-name');
+\Navigator::hideItem(url('/settings'), 'second-menu-name');
 ```
 
 Example on how to render Navigation within a Blade template
