@@ -50,27 +50,29 @@ trait RegisterSchemaMacros
 		// create place fields
 		Blueprint::macro('place', function ($prefix = '') {
 			/** @var Blueprint $this */
-			$this->string($this->prefix('venue'))->nullable();
-			$this->string($this->prefix('address'))->nullable();
-			$this->string($this->prefix('street'))->nullable();
-			$this->string($this->prefix('street_2'))->nullable();
-			$this->string($this->prefix('city'))->nullable();
-			$this->string($this->prefix('state'))->nullable();
-			$this->string($this->prefix('zip'))->nullable();
-			$this->string($this->prefix('country'))->nullable();
+			$this->string($this->prefix($prefix, 'venue'))->nullable();
+			$this->string($this->prefix($prefix, 'address'))->nullable();
+			$this->string($this->prefix($prefix, 'street'))->nullable();
+			$this->string($this->prefix($prefix, 'street_2'))->nullable();
+			$this->string($this->prefix($prefix, 'city'))->nullable();
+			$this->string($this->prefix($prefix, 'state'))->nullable();
+			$this->string($this->prefix($prefix, 'zip'))->nullable();
+			$this->string($this->prefix($prefix, 'country'))->nullable();
+			$this->string($this->prefix($prefix, 'country_iso_code'))->nullable();
 			$this->location($prefix);
 		});
 
 		// drop place fields
 		Blueprint::macro('dropPlace', function ($prefix = '') {
-			$this->dropColumn($this->prefix('venue'));
-			$this->dropColumn($this->prefix('address'));
-			$this->dropColumn($this->prefix('street'));
-			$this->dropColumn($this->prefix('street_2'));
-			$this->dropColumn($this->prefix('city'));
-			$this->dropColumn($this->prefix('state'));
-			$this->dropColumn($this->prefix('zip'));
-			$this->dropColumn($this->prefix('country'));
+			$this->dropColumn($this->prefix($prefix, 'venue'));
+			$this->dropColumn($this->prefix($prefix, 'address'));
+			$this->dropColumn($this->prefix($prefix, 'street'));
+			$this->dropColumn($this->prefix($prefix, 'street_2'));
+			$this->dropColumn($this->prefix($prefix, 'city'));
+			$this->dropColumn($this->prefix($prefix, 'state'));
+			$this->dropColumn($this->prefix($prefix, 'zip'));
+			$this->dropColumn($this->prefix($prefix, 'country'));
+			$this->dropColumn($this->prefix($prefix, 'country_iso_code'));
 			$this->dropLocation($prefix);
 		});
 	}
