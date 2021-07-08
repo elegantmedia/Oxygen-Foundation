@@ -29,8 +29,8 @@ trait RegisterSchemaMacros
 		// create location fields
 		Blueprint::macro('location', function ($prefix = '') {
 			/** @var Blueprint $this */
-			$this->float($this->prefix($prefix, 'latitude', 10, 6))->nullable()->index();
-			$this->float($this->prefix($prefix, 'longitude', 10, 6))->nullable()->index();
+			$this->float($this->prefix($prefix, 'latitude'), 10, 6)->nullable()->index();
+			$this->float($this->prefix($prefix, 'longitude'), 10, 6)->nullable()->index();
 		});
 
 		// drop location fields
@@ -52,10 +52,12 @@ trait RegisterSchemaMacros
 			/** @var Blueprint $this */
 			$this->string($this->prefix($prefix, 'venue'))->nullable();
 			$this->string($this->prefix($prefix, 'address'))->nullable();
+			$this->string($this->prefix($prefix, 'formatted_address'))->nullable();
 			$this->string($this->prefix($prefix, 'street'))->nullable();
 			$this->string($this->prefix($prefix, 'street_2'))->nullable();
 			$this->string($this->prefix($prefix, 'city'))->nullable();
 			$this->string($this->prefix($prefix, 'state'))->nullable();
+			$this->string($this->prefix($prefix, 'state_iso_code'))->nullable();
 			$this->string($this->prefix($prefix, 'zip'))->nullable();
 			$this->string($this->prefix($prefix, 'country'))->nullable();
 			$this->string($this->prefix($prefix, 'country_iso_code'))->nullable();
@@ -66,10 +68,12 @@ trait RegisterSchemaMacros
 		Blueprint::macro('dropPlace', function ($prefix = '') {
 			$this->dropColumn($this->prefix($prefix, 'venue'));
 			$this->dropColumn($this->prefix($prefix, 'address'));
+			$this->dropColumn($this->prefix($prefix, 'formatted_address'));
 			$this->dropColumn($this->prefix($prefix, 'street'));
 			$this->dropColumn($this->prefix($prefix, 'street_2'));
 			$this->dropColumn($this->prefix($prefix, 'city'));
 			$this->dropColumn($this->prefix($prefix, 'state'));
+			$this->dropColumn($this->prefix($prefix, 'state_iso_code'));
 			$this->dropColumn($this->prefix($prefix, 'zip'));
 			$this->dropColumn($this->prefix($prefix, 'country'));
 			$this->dropColumn($this->prefix($prefix, 'country_iso_code'));
