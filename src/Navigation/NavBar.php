@@ -59,7 +59,7 @@ class NavBar
 			}
 
 			// otherwise sort by order
-			return $first->getOrder() > $second->getOrder();
+			return (int)($first->getOrder() > $second->getOrder());
 		});
 
 		return $sorted;

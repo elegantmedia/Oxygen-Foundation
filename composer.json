@@ -12,15 +12,10 @@
         }
     ],
     "require": {
-        "php": "^7.3",
+        "php": "^7.3|^8.0",
         "ext-json": "*",
         "elegantmedia/laravel-simple-repository": "^2.0",
         "elegantmedia/php-toolkit": "^1.0",
-        "illuminate/console": "^8.0",
-        "illuminate/database": "^8.0",
-        "illuminate/http": "^8.0",
-        "illuminate/support": "^8.0",
-        "illuminate/validation": "^8.0",
         "laravel/scout": "^8.4"
     },
     "require-dev": {
