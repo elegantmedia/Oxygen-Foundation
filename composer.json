@@ -7,7 +7,7 @@
     "authors": [
         {
             "name": "Elegant Media",
-            "homepage": "http://www.elegantmedia.com.au",
+            "homepage": "https://www.elegantmedia.com.au",
             "role": "Developer"
         }
     ],
@@ -16,7 +16,7 @@
         "ext-json": "*",
         "elegantmedia/laravel-simple-repository": "^2.0",
         "elegantmedia/php-toolkit": "^1.0",
-        "laravel/scout": "^8.4"
+        "laravel/scout": "^8.4|^9.0"
     },
     "require-dev": {
         "mockery/mockery": "^1.4",
