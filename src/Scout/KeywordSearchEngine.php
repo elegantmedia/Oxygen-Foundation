@@ -106,4 +106,19 @@ class KeywordSearchEngine extends \Laravel\Scout\Engines\Engine
 	{
 		// Not required
 	}
+
+	public function lazyMap(Builder $builder, $results, $model)
+	{
+		// TODO: Implement lazyMap() method.
+	}
+
+	public function createIndex($name, array $options = [])
+	{
+		// TODO: Implement createIndex() method.
+	}
+
+	public function deleteIndex($name)
+	{
+		// TODO: Implement deleteIndex() method.
+	}
 }

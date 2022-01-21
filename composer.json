@@ -12,11 +12,11 @@
         }
     ],
     "require": {
-        "php": "^7.3|^8.0",
+        "php": "^8.0",
         "ext-json": "*",
         "elegantmedia/laravel-simple-repository": "^2.0",
         "elegantmedia/php-toolkit": "^1.0",
-        "laravel/scout": "^8.4|^9.0"
+        "laravel/scout": "^9.0"
     },
     "require-dev": {
         "mockery/mockery": "^1.4",
