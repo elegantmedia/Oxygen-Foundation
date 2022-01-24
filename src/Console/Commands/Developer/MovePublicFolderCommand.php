@@ -50,13 +50,6 @@ class MovePublicFolderCommand extends \Illuminate\Console\Command
 		// /app/Application.php
 		FileEditor::findAndReplace($applicationFilePath, "'public'", "'$destination'");
 
-		// /server.php
-		FileEditor::findAndReplace(
-			base_path('server.php'),
-			["/public/", 		"'/public'"],
-			["/$destination/", 	"'/$destination'"]
-		);
-
 		// /bootstrap/app.php
 		FileEditor::findAndReplace(
 			base_path('bootstrap/app.php'),
