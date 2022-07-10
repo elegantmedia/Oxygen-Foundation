@@ -59,6 +59,9 @@ class MovePublicFolderCommand extends \Illuminate\Console\Command
 
 		// webpack.mix.js
 		FileEditor::findAndReplace(base_path('webpack.mix.js'), "'public/", "'$destination/");
+		
+		// vite.config.js
+		FileEditor::findAndReplace(base_path('vite.config.js'), "'public/", "'$destination/");
 
 		// .gitignore
 		FileEditor::findAndReplace(base_path('.gitignore'), "/public/", "/$destination/");
