@@ -31,6 +31,8 @@ trait CanBrowse
 			'pageTitle' => $this->getResourcePluralName(),
 			'allItems' => $this->repo->search($this->getIndexFilter()),
 			'isDestroyingEntityAllowed' => $this->isDestroyAllowed(),
+			'canCreateEntities' => $this->canCreateEntities(),
+			'canEditEntities' => $this->canEditEntities(),
 		];
 
 		$viewName = $this->getIndexViewName();
@@ -42,4 +44,15 @@ trait CanBrowse
 	{
 		return $this->getVendorPrefixedViewName('index');
 	}
+
+	protected function canCreateEntities(): bool
+	{
+		return method_exists($this, 'create');
+	}
+
+	public function canEditEntities(): bool
+	{
+		return method_exists($this, 'edit');
+	}
+
 }
