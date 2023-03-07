@@ -5,10 +5,11 @@
 
 ### Version Compatibility
 
-| Laravel Version | This Package Version               | Branch         |
-| ---------------:| ----------------------------------:|---------------:|
-| v9              | 2.x                                | master         |  
-| v8              | 1.x                                | version/v1.x   |  
+| Laravel Version | This Package Version |       Branch |
+|----------------:|---------------------:|-------------:|
+|             v10 |                  3.x |       master |  
+|              v9 |                  2.x |          2.x |  
+|              v8 |                  1.x | version/v1.x |  
 
 See [CHANGE LOG](CHANGELOG.md) for change history.
 
