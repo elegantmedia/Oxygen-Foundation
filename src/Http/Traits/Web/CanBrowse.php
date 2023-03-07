@@ -54,5 +54,4 @@ trait CanBrowse
 	{
 		return method_exists($this, 'edit');
 	}
-
 }

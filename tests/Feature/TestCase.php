@@ -13,9 +13,9 @@ class TestCase extends \Orchestra\Testbench\TestCase
 
 	protected $pathfinder;
 
-	public function __construct()
+	public function __construct(string $name)
 	{
-		parent::__construct();
+		parent::__construct($name);
 
 		$this->pathfinder = app(Pathfinder::class);
 	}
