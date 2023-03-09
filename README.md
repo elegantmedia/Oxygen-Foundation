@@ -7,7 +7,7 @@
 
 | Laravel Version | This Package Version |       Branch |
 |----------------:|---------------------:|-------------:|
-|             v10 |                  3.x |       master |  
+|             v10 |                  3.x |          3.x |  
 |              v9 |                  2.x |          2.x |  
 |              v8 |                  1.x | version/v1.x |  
 

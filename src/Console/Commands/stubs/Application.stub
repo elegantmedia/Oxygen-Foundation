@@ -4,9 +4,9 @@ namespace App;
 class Application extends \Illuminate\Foundation\Application
 {
 
-	public function publicPath()
+	public function publicPath($path = '')
 	{
-    	return $this->basePath.DIRECTORY_SEPARATOR.'public';
+    	return $this->joinPaths($this->publicPath ?: $this->basePath('public_html'), $path);
 	}
 
 }
