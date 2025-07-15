@@ -1,5 +1,6 @@
 <?php
 
+declare(strict_types=1);
 
 namespace ElegantMedia\OxygenFoundation\Http\Traits\Web;
 
@@ -10,48 +11,43 @@ use Illuminate\View\View;
 
 trait CanRead
 {
+    /**
+     * @return Factory|View
+     *
+     * @throws FileNotFoundException
+     */
+    public function show($id)
+    {
+        $entity = $this->repo->find($id);
 
-	/**
-	 * @param $id
-	 *
-	 * @return Factory|View
-	 * @throws FileNotFoundException
-	 */
-	public function show($id)
-	{
-		$entity = $this->repo->find($id);
+        $data = [
+            'pageTitle' => $this->getShowPageTitle($entity),
+            'entity' => $entity,
+        ];
 
-		$data = [
-			'pageTitle' => $this->getShowPageTitle($entity),
-			'entity' => $entity,
-		];
+        $viewName = $this->getShowViewName();
 
-		$viewName = $this->getShowViewName();
+        return view($viewName, $data);
+    }
 
-		return view($viewName, $data);
-	}
+    protected function getShowPageTitle(Model $model): string
+    {
+        return 'View ' . $this->getResourceSingularTitle();
+    }
 
-	/**
-	 * @param Model $model
-	 * @return string
-	 */
-	protected function getShowPageTitle(Model $model): string
-	{
-		return 'View ' . $this->getResourceSingularTitle();
-	}
+    /**
+     * @return mixed
+     *
+     * @throws FileNotFoundException
+     */
+    protected function getShowViewName()
+    {
+        $view = $this->getVendorPrefixedViewName('show');
 
-	/**
-	 * @return mixed
-	 * @throws FileNotFoundException
-	 */
-	protected function getShowViewName()
-	{
-		$view = $this->getVendorPrefixedViewName('show');
+        if (view()->exists($view)) {
+            return $view;
+        }
 
-		if (view()->exists($view)) {
-			return $view;
-		}
-
-		throw new FileNotFoundException("View $view not found");
-	}
+        throw new FileNotFoundException("View $view not found");
+    }
 }

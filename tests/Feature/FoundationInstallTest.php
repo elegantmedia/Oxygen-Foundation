@@ -1,40 +1,38 @@
 <?php
 
+declare(strict_types=1);
 
 namespace ElegantMedia\OxygenFoundation\Tests\Feature;
 
-use Illuminate\Support\Facades\File;
-
 class FoundationInstallTest extends TestCase
 {
+    protected function setUp(): void
+    {
+        parent::setUp();
 
-	protected function setUp(): void
-	{
-		parent::setUp();
+        $this->cleanup();
+    }
 
-		$this->cleanup();
-	}
+    protected function tearDown(): void
+    {
+        $this->cleanup();
 
-	protected function tearDown(): void
-	{
-		$this->cleanup();
+        parent::tearDown();
+    }
 
-		parent::tearDown();
-	}
+    protected function cleanup()
+    {
+        if (file_exists(app_path('Entities/BaseRepository.php'))) {
+            unlink(app_path('Entities/BaseRepository.php'));
+        }
+    }
 
-	protected function cleanup()
-	{
-		if (file_exists(app_path('Entities/BaseRepository.php'))) {
-			unlink(app_path('Entities/BaseRepository.php'));
-		}
-	}
+    public function test_oxygen_install_adds_base_files()
+    {
+        $this->assertFileDoesNotExist(app_path('Entities/BaseRepository.php'));
 
-	public function testOxygenInstallAddsBaseFiles()
-	{
-		$this->assertFileDoesNotExist(app_path('Entities/BaseRepository.php'));
+        $this->artisan('oxygen:foundation:install');
 
-		$this->artisan('oxygen:foundation:install');
-
-		$this->assertFileExists(app_path('Entities/BaseRepository.php'));
-	}
+        $this->assertFileExists(app_path('Entities/BaseRepository.php'));
+    }
 }

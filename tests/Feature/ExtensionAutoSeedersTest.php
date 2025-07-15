@@ -1,65 +1,62 @@
 <?php
 
+declare(strict_types=1);
 
 namespace ElegantMedia\OxygenFoundation\Tests\Feature;
 
 use App\Entities\Examples\Example;
-use Database\Seeders\OxygenExtensions\AutoSeed\ExamplesSeeder;
 use ElegantMedia\OxygenFoundation\Core\Pathfinder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class ExtensionAutoSeedersTest extends TestCase
 {
+    use RefreshDatabase;
 
-	use RefreshDatabase;
+    /**
+     * Setup the test environment.
+     */
+    protected function setUp(): void
+    {
+        parent::setUp();
 
-	/**
-	 * Setup the test environment.
-	 */
-	protected function setUp(): void
-	{
-		parent::setUp();
+        $this->loadMigrationsFrom(__DIR__ . '/../laravel/database/migrations');
 
-		$this->loadMigrationsFrom(__DIR__.'/../laravel/database/migrations');
+        $this->artisan('migrate', ['--database' => 'testing']);
+    }
 
-		$this->artisan('migrate', ['--database' => 'testing']);
-	}
+    /**
+     * Define environment setup.
+     *
+     * @param \Illuminate\Foundation\Application $app
+     *
+     * @return void
+     */
+    protected function getEnvironmentSetUp($app)
+    {
+        $app['config']->set('database.default', 'testing');
+    }
 
-	/**
-	 * Define environment setup.
-	 *
-	 * @param  \Illuminate\Foundation\Application  $app
-	 *
-	 * @return void
-	 */
-	protected function getEnvironmentSetUp($app)
-	{
-		$app['config']->set('database.default', 'testing');
-	}
+    /**
+     * Test if extension's auto-seeders are detected.
+     */
+    public function test_extension_auto_seeder_runs_tests(): void
+    {
+        // we're mocking the auto-seeder's source path
+        // so we don't have to duplicate the file(s)
+        $testSeedersDir = __DIR__ . '/../laravel/database/seeders/OxygenExtensions/AutoSeed';
 
-	/**
-	 *
-	 * Test if extension's auto-seeders are detected
-	 *
-	 */
-	public function testExtensionAutoSeederRunsTests(): void
-	{
-		// we're mocking the auto-seeder's source path
-		// so we don't have to duplicate the file(s)
-		$testSeedersDir = __DIR__ . '/../laravel/database/seeders/OxygenExtensions/AutoSeed';
+        $this->mock(Pathfinder::class, function ($mock) use ($testSeedersDir) {
+            /** @var Mockery $mock */
+            $mock->shouldReceive()->dbAutoSeedersDir()->once()
+                ->andReturn($testSeedersDir);
+        });
 
-		$this->mock(Pathfinder::class, function ($mock) use ($testSeedersDir) {
-			/** @var Mockery $mock */
-			$mock->shouldReceive()->dbAutoSeedersDir()->once()
-				 ->andReturn($testSeedersDir);
-		});
+        $beforeCount = Example::whereName('TestExample_001')->count();
 
-		$beforeCount = Example::whereName('TestExample_001')->count();
+        $this->artisan('oxygen:seed');
 
-		$this->artisan('oxygen:seed');
+        $afterCount = Example::whereName('TestExample_001')->count();
 
-		$afterCount = Example::whereName('TestExample_001')->count();
-
-		$this->assertEquals($afterCount, $beforeCount + 1, 'Record not seeded in database.');
-	}
+        $this->assertEquals($afterCount, $beforeCount + 1, 'Record not seeded in database.');
+    }
 }

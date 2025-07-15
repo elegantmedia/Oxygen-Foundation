@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
 |--------------------------------------------------------------------------
 | Enable or disable application features from this file
@@ -15,29 +17,27 @@
 */
 
 return [
+    /*
+    |--------------------------------------------------------------------------
+    | AUTHENTICATION FEATURES
+    |--------------------------------------------------------------------------
+    */
 
-	/*
-	|--------------------------------------------------------------------------
-	| AUTHENTICATION FEATURES
-	|--------------------------------------------------------------------------
-	*/
+    'auth' => [
+        // allow any user to register
+        'public-users-can-register' => env('REGISTRATIONS_ENABLED', false),
+    ],
 
-	'auth' => [
-		// allow any user to register
-		'public-users-can-register' => env('REGISTRATIONS_ENABLED', false),
-	],
+    /*
+    |--------------------------------------------------------------------------
+    | SECURITY FEATURES
+    |--------------------------------------------------------------------------
+    */
 
-	/*
-	|--------------------------------------------------------------------------
-	| SECURITY FEATURES
-	|--------------------------------------------------------------------------
-	*/
+    'security' => [
+        // to reduce spam contacts, enable recaptcha on .env file
+        'recaptcha_enabled' => env('RECAPTCHA_ENABLED', false),
+    ],
 
-	'security' => [
-		// to reduce spam contacts, enable recaptcha on .env file
-		'recaptcha_enabled' => env('RECAPTCHA_ENABLED', false),
-	],
-
-	'api_active' => env('API_ACTIVE', false),
-
+    'api_active' => env('API_ACTIVE', false),
 ];

@@ -1,290 +1,265 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ElegantMedia\OxygenFoundation\Navigation;
 
 use ElegantMedia\PHPToolkit\Types\HasAttributes;
 use Illuminate\Contracts\Support\Arrayable;
 
-/* @property id string Unique ID of the NavItem  */
-/* @property $text string Nav Item displayed text */
-/* @property $class string Get  */
-/* @property $icon_class string Icon class for the item  */
-/* @property $url string URL for the item  */
-/* @property $resource string  */
-/* @property $order int  */
-/* @property $hidden boolean Is hidden? */
-/* @property $permission string  */
+/**
+ * @property string $id         Unique ID of the NavItem
+ * @property string $text       Nav Item displayed text
+ * @property string $class      CSS class
+ * @property string $icon_class Icon class for the item
+ * @property string $url        URL for the item
+ * @property string $resource   Resource name
+ * @property int    $order      Sort order
+ * @property bool   $hidden     Is hidden?
+ * @property string $permission Required permission
+ */
 class NavItem implements Arrayable
 {
+    use HasAttributes;
 
-	use HasAttributes;
+    public function __construct($attributes = null)
+    {
+        if (is_string($attributes)) {
+            $this->text = $attributes;
+        }
 
-	public function __construct($attributes = null)
-	{
-		if (is_string($attributes)) {
-			$this->text = $attributes;
-		}
+        if (is_array($attributes)) {
+            $this->attributes = $attributes;
+        }
 
-		if (is_array($attributes)) {
-			$this->attributes = $attributes;
-		}
+        if (! isset($this->attributes['order'])) {
+            $this->order = 0;
+        }
 
-		if (!isset($this->attributes['order'])) {
-			$this->order = 0;
-		}
+        if (! isset($this->attributes['hidden'])) {
+            $this->hidden = false;
+        }
+    }
 
-		if (!isset($this->attributes['hidden'])) {
-			$this->hidden = false;
-		}
-	}
+    public function hasResource(): bool
+    {
+        return ! empty($this->resource);
+    }
 
+    public function hasValidResource(): bool
+    {
+        if (! $this->hasResource()) {
+            return false;
+        }
 
-	/**
-	 * @return bool
-	 */
-	public function hasResource(): bool
-	{
-		return !empty($this->resource);
-	}
+        return \Illuminate\Support\Facades\Route::has($this->resource);
+    }
 
-	/**
-	 * @return bool
-	 */
-	public function hasValidResource(): bool
-	{
-		if (!$this->hasResource()) {
-			return false;
-		}
+    public function userAllowedToSee(): bool
+    {
+        return $this->isUserAllowedToSee();
+    }
 
-		return \Illuminate\Support\Facades\Route::has($this->resource);
-	}
+    public function isUserAllowedToSee(): bool
+    {
+        if ($this->isHidden()) {
+            return false;
+        }
 
-	public function userAllowedToSee(): bool
-	{
-		return $this->isUserAllowedToSee();
-	}
+        $permission = $this->getPermission();
 
-	/**
-	 * @return bool
-	 */
-	public function isUserAllowedToSee(): bool
-	{
-		if ($this->isHidden()) {
-			return false;
-		}
+        // if there's no permission, allow anyone to see
+        if (empty($permission)) {
+            return true;
+        }
 
-		$permission = $this->getPermission();
+        $user = auth()->user();
 
-		// if there's no permission, allow anyone to see
-		if (empty($permission)) {
-			return true;
-		}
+        if (! $user) {
+            return false;
+        }
 
-		$user = auth()->user();
+        return $user->can($permission);
+    }
 
-		if (!$user) {
-			return false;
-		}
+    public function hasIcon(): bool
+    {
+        return ! empty($this->icon_class);
+    }
 
-		return $user->can($permission);
-	}
+    /**
+     * Get the instance as an array.
+     */
+    public function toArray(): array
+    {
+        return [
+            'id' => $this->id,
+            'text' => $this->text,
+            'url' => $this->url,
+            'resource' => $this->resource,
+            'class' => $this->class,
+            'order' => $this->order,
+            'permission' => $this->permission,
+            'hidden' => $this->hidden,
+        ];
+    }
 
-	/**
-	 * @return bool
-	 */
-	public function hasIcon(): bool
-	{
-		return !empty($this->icon_class);
-	}
+    /*
+     |-----------------------------------------------------------
+     | Getters and Setters
+     |-----------------------------------------------------------
+     */
 
+    /**
+     * @param mixed $text
+     */
+    public function setText($text): self
+    {
+        $this->attributes['text'] = $text;
 
-	/**
-	 * Get the instance as an array.
-	 *
-	 * @return array
-	 */
-	public function toArray(): array
-	{
-		return [
-			'id' => $this->id,
-			'text' => $this->text,
-			'url' => $this->url,
-			'resource' => $this->resource,
-			'class' => $this->class,
-			'order' => $this->order,
-			'permission' => $this->permission,
-			'hidden' => $this->hidden,
-		];
-	}
+        return $this;
+    }
 
-	/*
-	 |-----------------------------------------------------------
-	 | Getters and Setters
-	 |-----------------------------------------------------------
-	 */
+    /**
+     * @param mixed $url
+     */
+    public function setUrl($url): self
+    {
+        $this->attributes['url'] = $url;
 
-	/**
-	 * @param mixed $text
-	 *
-	 * @return NavItem
-	 */
-	public function setText($text): self
-	{
-		$this->attributes['text'] = $text;
+        return $this;
+    }
 
-		return $this;
-	}
+    /**
+     * @param mixed $resource
+     */
+    public function setResource($resource): self
+    {
+        $this->resource = $resource;
 
-	/**
-	 * @param mixed $url
-	 *
-	 * @return NavItem
-	 */
-	public function setUrl($url): self
-	{
-		$this->attributes['url'] = $url;
+        return $this;
+    }
 
-		return $this;
-	}
+    /**
+     * @param mixed $class
+     */
+    public function setClass($class): self
+    {
+        $this->class = $class;
 
-	/**
-	 * @param mixed $resource
-	 *
-	 * @return NavItem
-	 */
-	public function setResource($resource): self
-	{
-		$this->resource = $resource;
+        return $this;
+    }
 
-		return $this;
-	}
+    /**
+     * @param mixed $order
+     */
+    public function setOrder(int $order): self
+    {
+        $this->order = (int) $order;
 
-	/**
-	 * @param mixed $class
-	 *
-	 * @return NavItem
-	 */
-	public function setClass($class): self
-	{
-		$this->class = $class;
+        return $this;
+    }
 
-		return $this;
-	}
+    /**
+     * @return $this
+     */
+    public function setIconClass(string $class): self
+    {
+        $this->icon_class = $class;
 
-	/**
-	 * @param mixed $order
-	 *
-	 * @return NavItem
-	 */
-	public function setOrder(int $order): self
-	{
-		$this->order = (int) $order;
+        return $this;
+    }
 
-		return $this;
-	}
+    /**
+     * @return string|null
+     */
+    public function getPermission()
+    {
+        return $this->permission;
+    }
 
-	/**
-	 * @param string $class
-	 *
-	 * @return $this
-	 */
-	public function setIconClass(string $class): self
-	{
-		$this->icon_class = $class;
+    /**
+     * @param mixed $permission
+     */
+    public function setPermission($permission): self
+    {
+        $this->permission = $permission;
 
-		return $this;
-	}
+        return $this;
+    }
 
-	/**
-	 * @return null|string
-	 */
-	public function getPermission()
-	{
-		return $this->permission;
-	}
+    /**
+     * @return mixed
+     */
+    public function getOrder(): int
+    {
+        return $this->order;
+    }
 
-	/**
-	 * @param mixed $permission
-	 */
-	public function setPermission($permission): self
-	{
-		$this->permission = $permission;
+    /**
+     * @return string|null
+     */
+    public function getResource()
+    {
+        return $this->resource;
+    }
 
-		return $this;
-	}
+    /**
+     * @return mixed
+     */
+    public function getText(): string
+    {
+        return $this->attributes['text'];
+    }
 
-	/**
-	 * @return mixed
-	 */
-	public function getOrder(): int
-	{
-		return $this->order;
-	}
+    public function hasUrl()
+    {
+        return ! is_null($this->getUrl());
+    }
 
-	/**
-	 * @return null|string
-	 */
-	public function getResource()
-	{
-		return $this->resource;
-	}
+    /**
+     * @return string|null
+     */
+    public function getUrl()
+    {
+        if (! empty($this->attributes['url'])) {
+            return $this->attributes['url'];
+        }
 
-	/**
-	 * @return mixed
-	 */
-	public function getText(): string
-	{
-		return $this->attributes['text'];
-	}
+        if ($this->hasValidResource()) {
+            return route($this->resource);
+        }
 
-	public function hasUrl()
-	{
-		return !is_null($this->getUrl());
-	}
+        return null;
+    }
 
-	/**
-	 * @return null|string
-	 */
-	public function getUrl()
-	{
-		if (!empty($this->attributes['url'])) {
-			return $this->attributes['url'];
-		}
+    public function getId()
+    {
+        // return the unique ID for function
+        if ($this->id) {
+            return $this->id;
+        }
 
-		if ($this->hasValidResource()) {
-			return route($this->resource);
-		}
+        return $this->getUrl();
+    }
 
-		return null;
-	}
+    /**
+     * @return string|null
+     */
+    public function getClass()
+    {
+        return $this->class;
+    }
 
-	public function getId()
-	{
-		// return the unique ID for function
-		if ($this->id) {
-			return $this->id;
-		}
+    public function setHidden($hidden = true)
+    {
+        $this->hidden = $hidden;
 
-		return $this->getUrl();
-	}
+        return $this;
+    }
 
-	/**
-	 * @return null|string
-	 */
-	public function getClass()
-	{
-		return $this->class;
-	}
-
-	public function setHidden($hidden = true)
-	{
-		$this->hidden = $hidden;
-
-		return $this;
-	}
-
-	public function isHidden()
-	{
-		return $this->hidden;
-	}
+    public function isHidden()
+    {
+        return $this->hidden;
+    }
 }

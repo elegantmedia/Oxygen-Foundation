@@ -5,13 +5,18 @@
 
 ### Version Compatibility
 
-| Laravel Version | This Package Version |       Branch |
-|----------------:|---------------------:|-------------:|
-|             v10 |                  3.x |          3.x |  
-|              v9 |                  2.x |          2.x |  
-|              v8 |                  1.x | version/v1.x |  
+| Laravel Version | This Package Version |       Branch | PHP Version |
+|----------------:|---------------------:|-------------:|------------:|
+|             v12 |                  5.x |          5.x |     ^8.2    |
+|             v10 |                  3.x |          3.x |     ^8.1    |
+|              v9 |                  2.x |          2.x |     ^8.0    |
+|              v8 |                  1.x | version/v1.x |     ^7.3    |  
 
 See [CHANGE LOG](CHANGELOG.md) for change history.
+
+## Upgrading
+
+If you're upgrading from v4 to v5, please see the [Upgrade Guide](UPGRADE-v5.md) for detailed instructions.
 
 ## Install
 

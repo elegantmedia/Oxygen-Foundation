@@ -12,29 +12,32 @@
         }
     ],
     "require": {
-        "php": "^8.1",
+        "php": "^8.2",
         "ext-json": "*",
-        "elegantmedia/laravel-simple-repository": "^3.0",
-        "elegantmedia/php-toolkit": "^1.0",
-        "laravel/scout": "^10.0"
+        "elegantmedia/laravel-simple-repository": "^5.0",
+        "elegantmedia/php-toolkit": "^2.0",
+        "laravel/scout": "^10.12.2"
     },
     "require-dev": {
+        "laravel/framework": "^12.0",
         "mockery/mockery": "^1.5",
-        "orchestra/testbench": "^8.0",
-        "phpunit/phpunit": "^10.0",
-        "squizlabs/php_codesniffer": "^3.7"
+        "orchestra/testbench": "^10.0",
+        "phpunit/phpunit": "^11.0",
+        "squizlabs/php_codesniffer": "^3.7",
+        "phpstan/phpstan": "^2.0",
+        "laravel/pint": "^1.0",
+        "spatie/laravel-data": "^4.0",
+        "spatie/laravel-package-tools": "^1.0"
     },
     "autoload": {
         "psr-4": {
             "ElegantMedia\\OxygenFoundation\\": "src"
-        },
-		"files": [
-			"src/functions.php"
-		]
+        }
     },
 	"autoload-dev": {
 		"psr-4": {
 			"App\\": "tests/laravel/app",
+			"ElegantMedia\\OxygenFoundation\\Tests\\": "tests/",
 			"ElegantMedia\\OxygenFoundation\\Tests\\Feature\\": "tests/Feature",
 			"ElegantMedia\\OxygenFoundation\\TestPackage\\": "tests/TestPackage/src",
 			"Database\\Seeders\\": "tests/laravel/database/seeders/"
