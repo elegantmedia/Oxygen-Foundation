@@ -184,6 +184,45 @@ Example on how to render Navigation within a Blade template
 
 
 
+## Testing
+
+Run the test suite:
+
+```bash
+composer test
+```
+
+### Code Coverage
+
+To generate code coverage reports, you need to install a coverage driver. We recommend using PCOV for better performance:
+
+#### Installing PCOV (Recommended)
+
+On macOS with Homebrew:
+```bash
+brew tap shivammathur/extensions
+brew install shivammathur/extensions/pcov@8.3
+```
+
+On Ubuntu/Debian:
+```bash
+sudo apt-get install php-pcov
+```
+
+After installation, run tests with coverage:
+```bash
+composer test-coverage-pcov
+```
+
+#### Alternative: Using Xdebug
+
+If you already have Xdebug installed, you can use it for coverage:
+```bash
+composer test-coverage
+```
+
+Coverage reports will be generated in the `build/coverage` directory.
+
 ## Contributing
 
 Please see [CONTRIBUTING](CONTRIBUTING.md) and for details.

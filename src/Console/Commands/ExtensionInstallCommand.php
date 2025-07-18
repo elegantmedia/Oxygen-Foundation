@@ -180,19 +180,19 @@ abstract class ExtensionInstallCommand extends Command implements ExtensionSetup
 	}
 
 	/**
-	 * Install Required Pacakges.
+	 * Install Required Dev Packages.
 	 */
 	protected function installComposerRequireDevDependencies(): void
 	{
-		$this->installComposerDependencies($this->composerRequire);
+		$this->installComposerDependencies($this->composerRequireDev, true);
 	}
 
 	/**
-	 * Install Required Dev Packages.
+	 * Install Required Packages.
 	 */
 	protected function installComposerRequireDependencies(): void
 	{
-		$this->installComposerDependencies($this->composerRequireDev, true);
+		$this->installComposerDependencies($this->composerRequire);
 	}
 
 	/**
@@ -208,18 +208,29 @@ abstract class ExtensionInstallCommand extends Command implements ExtensionSetup
 
 		$this->info('Installing ' . implode(' ', $packages) . '...');
 
-		$command = $this->composerRequireDev;
+		$command = $packages;
 		array_unshift($command, 'composer', 'require');
 
 		if ($dev) {
 			$command[] = '--dev';
 		}
 
-		(new Process($command, base_path()))
-			->setTimeout(null)
-			->run(function ($type, $output) {
+		$process = new Process($command, base_path());
+		$process->setTimeout(null);
+
+		$exitCode = $process->run(function ($type, $output) {
+			if ($this->output) {
 				$this->output->write($output);
-			});
+			}
+		});
+
+		if ($exitCode !== 0) {
+			$errorMessage = 'Failed to install composer dependencies';
+			if ($process->getErrorOutput()) {
+				$errorMessage .= ': ' . trim($process->getErrorOutput());
+			}
+			throw new \RuntimeException($errorMessage);
+		}
 	}
 
 	/**
@@ -263,7 +274,12 @@ abstract class ExtensionInstallCommand extends Command implements ExtensionSetup
 
 		$configurationKey = $dev ? 'devDependencies' : 'dependencies';
 
-		$packages = json_decode(file_get_contents(base_path('package.json')), true);
+		$packageJsonContent = file_get_contents(base_path('package.json'));
+		$packages = json_decode($packageJsonContent, true);
+
+		if (json_last_error() !== JSON_ERROR_NONE) {
+			throw new \RuntimeException('Failed to parse package.json: ' . json_last_error_msg());
+		}
 
 		// overwrite the key, so if the version is changed, it will update it
 		// TODO: maybe only allow upgrading or restricting versions?
@@ -271,10 +287,14 @@ abstract class ExtensionInstallCommand extends Command implements ExtensionSetup
 
 		ksort($packages[$configurationKey]);
 
-		file_put_contents(
+		$result = file_put_contents(
 			base_path('package.json'),
 			json_encode($packages, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT) . PHP_EOL
 		);
+
+		if ($result === false) {
+			throw new \RuntimeException('Failed to write package.json');
+		}
 	}
 
 	/**

@@ -121,4 +121,50 @@ class ExtensionInstallCommandTest extends TestCase
 		// Should not throw exception in test environment
 		$this->assertNull($method->invoke($this->command));
 	}
+
+	public function testInstallComposerDependenciesThrowsExceptionOnFailure(): void
+	{
+		// Create a command that simulates a failed composer install
+		$command = new class () extends ExtensionInstallCommand {
+			protected $signature = 'test:command {--install_dependencies=true}';
+			protected $description = 'Test Command';
+			protected $composerRequire = ['invalid/package'];
+
+			public function getExtensionServiceProvider(): string
+			{
+				return 'TestServiceProvider';
+			}
+
+			public function getExtensionDisplayName(): string
+			{
+				return 'TestExtension';
+			}
+
+			public function hasOption($key): bool
+			{
+				return $key === 'install_dependencies' ? true : parent::hasOption($key);
+			}
+
+			public function option($key = null): mixed
+			{
+				return $key === 'install_dependencies' ? 'true' : null;
+			}
+
+			public function info($string, $verbosity = null): void
+			{
+				// Silent for test
+			}
+
+			public function error($string, $verbosity = null): void
+			{
+				// Silent for test
+			}
+		};
+
+		$this->expectException(\RuntimeException::class);
+		$this->expectExceptionMessage('Failed to install composer dependencies');
+
+		// This should throw an exception when composer fails
+		$command->handle();
+	}
 }
