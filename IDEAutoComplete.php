@@ -20,7 +20,9 @@ use Illuminate\Http\JsonResponse;
  * @method JsonResponse apiErrorAccessDenied($message = null)                                      Send 403 response.
  * @method JsonResponse apiError($message = null, $payload = null, $statusCode = 422)              Send a generic error response.
  */
-interface ResponseFactory {}
+interface ResponseFactory
+{
+}
 
 /*
 |--------------------------------------------------------------------------
@@ -38,4 +40,6 @@ namespace Illuminate\Database\Schema;
  * @method \Illuminate\Database\Schema\Blueprint dropPlace($prefix = '')      Drop place fields
  * @method \Illuminate\Database\Schema\Blueprint dropFile($prefix = '')       Drop file fields
  */
-class Blueprint {}
+class Blueprint
+{
+}

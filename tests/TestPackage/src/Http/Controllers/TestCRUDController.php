@@ -10,18 +10,18 @@ use ElegantMedia\OxygenFoundation\TestPackage\Entities\Testers\TestersRepository
 
 class TestCRUDController extends ManageBaseController
 {
-    use CanCRUD;
+	use CanCRUD;
 
-    public function __construct(TestersRepository $repo)
-    {
-        $this->repo = $repo;
+	public function __construct(TestersRepository $repo)
+	{
+		$this->repo = $repo;
 
-        $this->resourceEntityName = 'Testers';
+		$this->resourceEntityName = 'Testers';
 
-        $this->viewsVendorName = 'oxygen::test-extension';
+		$this->viewsVendorName = 'oxygen::test-extension';
 
-        $this->resourcePrefix = 'manage';
+		$this->resourcePrefix = 'manage';
 
-        $this->isDestroyAllowed = false;
-    }
+		$this->isDestroyAllowed = false;
+	}
 }

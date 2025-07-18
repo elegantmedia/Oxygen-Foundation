@@ -8,13 +8,11 @@ use Illuminate\Database\Seeder;
 
 class TestSeeder extends Seeder
 {
-    /**
-     * Run the database seeders.
-     *
-     * @return void
-     */
-    public function run()
-    {
-        //
-    }
+	/**
+	 * Run the database seeders.
+	 */
+	public function run()
+	{
+		//
+	}
 }

@@ -12,74 +12,74 @@ use Illuminate\Http\Request;
 
 trait HasCreateOperation
 {
-    /**
-     * Create a new record view.
-     */
-    public function create(): Factory|View
-    {
-        $data = [
-            'pageTitle' => $this->getCreatePageTitle(),
-            'entity' => $this->getModel(),
-            'form' => $this->getCreateForm($this->getModel()),
-        ];
+	/**
+	 * Create a new record view.
+	 */
+	public function create(): Factory|View
+	{
+		$data = [
+			'pageTitle' => $this->getCreatePageTitle(),
+			'entity' => $this->getModel(),
+			'form' => $this->getCreateForm($this->getModel()),
+		];
 
-        $viewName = $this->getCreateViewName();
+		$viewName = $this->getCreateViewName();
 
-        return view($viewName, $data);
-    }
+		return view($viewName, $data);
+	}
 
-    /**
-     * Get form data for create view.
-     */
-    protected function getCreateForm($entity = null): ?array
-    {
-        return null;
-    }
+	/**
+	 * Get form data for create view.
+	 */
+	protected function getCreateForm($entity = null): ?array
+	{
+		return null;
+	}
 
-    /**
-     * Handle store/POST method for the controller.
-     */
-    public function store(Request $request): RedirectResponse
-    {
-        $rules = null;
-        if (method_exists($this->getModel(), 'getCreateRules')) {
-            $rules = $this->getModel()->getCreateRules();
-        }
+	/**
+	 * Handle store/POST method for the controller.
+	 */
+	public function store(Request $request): RedirectResponse
+	{
+		$rules = null;
+		if (method_exists($this->getModel(), 'getCreateRules')) {
+			$rules = $this->getModel()->getCreateRules();
+		}
 
-        $messages = null;
-        if (method_exists($this->getModel(), 'getCreateValidationMessages')) {
-            $messages = $this->getModel()->getCreateValidationMessages();
-        }
+		$messages = null;
+		if (method_exists($this->getModel(), 'getCreateValidationMessages')) {
+			$messages = $this->getModel()->getCreateValidationMessages();
+		}
 
-        $entity = $this->storeOrUpdateRequest($request, null, $rules, $messages);
+		$entity = $this->storeOrUpdateRequest($request, null, $rules, $messages);
 
-        return redirect()->route($this->getRouteToRedirectToAfterStore());
-    }
+		return redirect()->route($this->getRouteToRedirectToAfterStore());
+	}
 
-    protected function getCreatePageTitle(): string
-    {
-        return 'Add New ' . $this->getResourceSingularTitle();
-    }
+	protected function getCreatePageTitle(): string
+	{
+		return 'Add New ' . $this->getResourceSingularTitle();
+	}
 
-    protected function getCreateViewName(): string
-    {
-        $view = $this->getVendorPrefixedViewName('create');
+	protected function getCreateViewName(): string
+	{
+		$view = $this->getVendorPrefixedViewName('create');
 
-        if (view()->exists($view)) {
-            return $view;
-        }
+		if (view()->exists($view)) {
+			return $view;
+		}
 
-        $view = $this->getVendorPrefixedViewName('form');
+		$view = $this->getVendorPrefixedViewName('form');
 
-        if (view()->exists($view)) {
-            return $view;
-        }
+		if (view()->exists($view)) {
+			return $view;
+		}
 
-        throw new FileNotFoundException("View $view not found");
-    }
+		throw new FileNotFoundException("View $view not found");
+	}
 
-    protected function getRouteToRedirectToAfterStore(): string
-    {
-        return $this->getIndexRouteName();
-    }
+	protected function getRouteToRedirectToAfterStore(): string
+	{
+		return $this->getIndexRouteName();
+	}
 }

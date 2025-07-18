@@ -2,7 +2,7 @@
 
 ## Pull Requests
 
-- **[PSR-2 Coding Standard](https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-2-coding-style-guide.md)** - Check the code style with `composer check-style` and fix it with `composer fix-style`.
+- **[PSR-12 Coding Standard](https://www.php-fig.org/psr/psr-12/)** - Check the code style with `composer check-style` and fix it with `composer fix-style`. This project uses PHP CS Fixer with tabs for indentation.
 
 - **Create feature branches** - Don't ask us to pull from your master branch.
 

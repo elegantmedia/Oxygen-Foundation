@@ -19,72 +19,72 @@ use Laravel\Scout\EngineManager;
 
 class OxygenFoundationServiceProvider extends ServiceProvider
 {
-    use RegisterResponseMacros;
-    use RegisterSchemaMacros;
+	use RegisterResponseMacros;
+	use RegisterSchemaMacros;
 
-    protected array $configFiles = [
-        'oxygen' => __DIR__ . '/../config/oxygen.php',
-        'features' => __DIR__ . '/../config/features.php',
-        'scout' => __DIR__ . '/../config/scout.php',
-    ];
+	protected array $configFiles = [
+		'oxygen' => __DIR__ . '/../config/oxygen.php',
+		'features' => __DIR__ . '/../config/features.php',
+		'scout' => __DIR__ . '/../config/scout.php',
+	];
 
-    public function register(): void
-    {
-        $this->app->singleton('oxygen', fn () => new OxygenCore);
-        $this->app->singleton(Pathfinder::class);
+	public function register(): void
+	{
+		$this->app->singleton('oxygen', fn () => new OxygenCore());
+		$this->app->singleton(Pathfinder::class);
 
-        foreach ($this->configFiles as $key => $path) {
-            $this->mergeConfigFrom($path, $key);
-        }
+		foreach ($this->configFiles as $key => $path) {
+			$this->mergeConfigFrom($path, $key);
+		}
 
-        $this->registerResponseMacros();
-        $this->registerSchemaMacros();
-        $this->registerCommands();
+		$this->registerResponseMacros();
+		$this->registerSchemaMacros();
+		$this->registerCommands();
 
-        // Register Navigator Facade
-        $this->app->singleton('elegantmedia.oxygen.navigator', fn () => new Navigator);
-    }
+		// Register Navigator Facade
+		$this->app->singleton('elegantmedia.oxygen.navigator', fn () => new Navigator());
+	}
 
-    public function boot(): void
-    {
-        $this->registerPublishables();
-        $this->bootScoutSearchEngines();
-    }
+	public function boot(): void
+	{
+		$this->registerPublishables();
+		$this->bootScoutSearchEngines();
+	}
 
-    protected function registerPublishables(): void
-    {
-        if ($this->app->runningInConsole()) {
-            // Publish config files
-            $configPaths = [];
-            foreach ($this->configFiles as $key => $path) {
-                $configPaths[$path] = config_path($key . '.php');
-            }
-            $this->publishes($configPaths, 'oxygen-config');
+	protected function registerPublishables(): void
+	{
+		if ($this->app->runningInConsole()) {
+			// Publish config files
+			$configPaths = [];
+			foreach ($this->configFiles as $key => $path) {
+				$configPaths[$path] = config_path($key . '.php');
+			}
+			$this->publishes($configPaths, 'oxygen-config');
 
-            // Publish installation stubs
-            $this->publishes([
-                __DIR__ . '/../stubs/app' => app_path(),
-            ], 'oxygen-foundation-install');
-        }
-    }
+			// Publish installation stubs
+			$this->publishes([
+				__DIR__ . '/../stubs/app' => app_path(),
+			], 'oxygen-foundation-install');
+		}
+	}
 
-    protected function bootScoutSearchEngines(): void
-    {
-        $this->app[EngineManager::class]->extend('keyword', fn () => new SecureKeywordEngine);
-    }
+	protected function bootScoutSearchEngines(): void
+	{
+		$this->app[EngineManager::class]->extend('keyword', fn () => new SecureKeywordEngine());
+	}
 
-    protected function registerCommands(): void
-    {
-        $commands = [
-            SeedCommand::class,
-            OxygenFoundationInstallCommand::class,
-            MovePublicFolderCommand::class,
-        ];
+	protected function registerCommands(): void
+	{
+		$commands = [
+			SeedCommand::class,
+			OxygenFoundationInstallCommand::class,
+			MovePublicFolderCommand::class,
+		];
 
-        if (! $this->app->environment('production')) {
-            $commands[] = RefreshDatabaseCommand::class;
-        }
+		if (! $this->app->environment('production')) {
+			$commands[] = RefreshDatabaseCommand::class;
+		}
 
-        $this->commands($commands);
-    }
+		$this->commands($commands);
+	}
 }

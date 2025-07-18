@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace ElegantMedia\OxygenFoundation\Facades;
 
+use ElegantMedia\OxygenFoundation\Navigation\NavBar;
+use ElegantMedia\OxygenFoundation\Navigation\NavItem;
 use Illuminate\Support\Collection;
 
 /**
@@ -14,8 +16,8 @@ use Illuminate\Support\Collection;
  */
 class Navigator extends \Illuminate\Support\Facades\Facade
 {
-    protected static function getFacadeAccessor()
-    {
-        return 'elegantmedia.oxygen.navigator';
-    }
+	protected static function getFacadeAccessor()
+	{
+		return 'elegantmedia.oxygen.navigator';
+	}
 }

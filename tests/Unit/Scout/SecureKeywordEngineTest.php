@@ -6,55 +6,87 @@ namespace ElegantMedia\OxygenFoundation\Tests\Unit\Scout;
 
 use ElegantMedia\OxygenFoundation\Scout\Engines\SecureKeywordEngine;
 use ElegantMedia\OxygenFoundation\Tests\TestCase;
-use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Eloquent\Model;
 use Laravel\Scout\Builder;
 use Mockery;
 
 class TestSearchableModel extends Model
 {
-    public function getSearchableFields(): array
-    {
-        return ['name', 'description'];
-    }
+	public function getSearchableFields(): array
+	{
+		return ['name', 'description'];
+	}
 }
 
 class SecureKeywordEngineTest extends TestCase
 {
-    private SecureKeywordEngine $engine;
+	private SecureKeywordEngine $engine;
 
-    protected function setUp(): void
-    {
-        parent::setUp();
-        $this->engine = new SecureKeywordEngine;
-    }
+	protected function setUp(): void
+	{
+		parent::setUp();
+		$this->engine = new SecureKeywordEngine();
+	}
 
-    public function test_search_escapes_special_characters(): void
-    {
-        $this->markTestSkipped('Requires database connection to test properly');
-    }
+	public function testSearchEscapesSpecialCharacters(): void
+	{
+		$model = new TestSearchableModel();
+		$builder = new Builder($model, 'test%_query\\');
 
-    public function test_throws_exception_when_searchable_fields_not_defined(): void
-    {
-        $model = Mockery::mock(Model::class);
-        $model->shouldReceive('getSearchableFields')->never();
+		// Use reflection to test the protected prepareSearchTerms method
+		$reflection = new \ReflectionClass($this->engine);
+		$method = $reflection->getMethod('prepareSearchTerms');
+		$method->setAccessible(true);
 
-        $builder = new Builder($model, 'test');
+		$searchTerms = $method->invoke($this->engine, 'test%_query\\');
 
-        $this->expectException(\RuntimeException::class);
-        $this->expectExceptionMessage('Model must implement getSearchableFields() method');
+		// Check that special characters are escaped
+		$this->assertIsArray($searchTerms);
+		$this->assertCount(2, $searchTerms);
+		$this->assertEquals('%test\\%\\_query\\\\%', $searchTerms[0]);
+		$this->assertStringContainsString('test\\%\\_query\\\\', $searchTerms[1]);
+	}
 
-        $this->engine->search($builder);
-    }
+	public function testThrowsExceptionWhenSearchableFieldsNotDefined(): void
+	{
+		$model = Mockery::mock(Model::class);
+		$model->shouldReceive('getSearchableFields')->never();
 
-    public function test_paginate_returns_paginated_results(): void
-    {
-        $this->markTestSkipped('Requires database connection to test properly');
-    }
+		$builder = new Builder($model, 'test');
 
-    protected function tearDown(): void
-    {
-        Mockery::close();
-        parent::tearDown();
-    }
+		$this->expectException(\RuntimeException::class);
+		$this->expectExceptionMessage('Model must implement getSearchableFields() method');
+
+		$this->engine->search($builder);
+	}
+
+	public function testPaginateReturnsPaginatedResults(): void
+	{
+		// Create a mock query builder that returns a paginator
+		$queryBuilder = Mockery::mock(\Illuminate\Database\Eloquent\Builder::class);
+		$paginator = Mockery::mock(\Illuminate\Contracts\Pagination\LengthAwarePaginator::class);
+
+		$queryBuilder->shouldReceive('where')->once()->andReturnSelf();
+		$queryBuilder->shouldReceive('paginate')
+			->once()
+			->with(15, ['*'], 'page', 1)
+			->andReturn($paginator);
+
+		// Create a mock model that returns our query builder
+		$model = Mockery::mock(TestSearchableModel::class)->makePartial();
+		$model->shouldReceive('query')->once()->andReturn($queryBuilder);
+		$model->shouldReceive('getSearchableFields')->once()->andReturn(['name', 'description']);
+
+		$builder = new Builder($model, 'test');
+
+		$result = $this->engine->paginate($builder, 15, 1);
+
+		$this->assertSame($paginator, $result);
+	}
+
+	protected function tearDown(): void
+	{
+		Mockery::close();
+		parent::tearDown();
+	}
 }

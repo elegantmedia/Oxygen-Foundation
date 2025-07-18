@@ -1,6 +1,49 @@
 # Path-based git attributes
 # https://www.kernel.org/pub/software/scm/git/docs/gitattributes.html
 
+# Auto detect text files and perform LF normalization
+* text=auto eol=lf
+
+# Force batch scripts to always use CRLF line endings
+*.bat text eol=crlf
+*.cmd text eol=crlf
+
+# Force bash scripts to always use LF line endings
+*.sh text eol=lf
+
+# PHP files
+*.php text eol=lf
+*.blade.php text eol=lf
+
+# Config files
+*.json text eol=lf
+*.xml text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+.env text eol=lf
+.env.* text eol=lf
+.editorconfig text eol=lf
+.gitattributes text eol=lf
+.gitignore text eol=lf
+.htaccess text eol=lf
+
+# Documentation
+*.md text eol=lf
+*.txt text eol=lf
+LICENSE text eol=lf
+README text eol=lf
+
+# Web files
+*.css text eol=lf
+*.js text eol=lf
+*.ts text eol=lf
+*.html text eol=lf
+*.htm text eol=lf
+*.vue text eol=lf
+*.scss text eol=lf
+*.sass text eol=lf
+*.less text eol=lf
+
 # Ignore all test and documentation with "export-ignore".
 /.editorconfig               export-ignore
 /.gitattributes              export-ignore
@@ -12,8 +55,11 @@
 /ISSUE_TEMPLATE.md           export-ignore
 /phpcs.xml.dist              export-ignore
 /phpunit.xml.dist            export-ignore
+/phpstan.neon                export-ignore
+/pint.json                   export-ignore
 /tests/Components            export-ignore
 /tests/Feature               export-ignore
 /tests/laravel               export-ignore
 /tests/TestPackage           export-ignore
 /docs                        export-ignore
+/.github                     export-ignore

@@ -8,6 +8,6 @@ use ElegantMedia\OxygenFoundation\Entities\OxygenRepository;
 
 class APIBaseController extends App\Http\Controllers\Controller
 {
-    /** @var OxygenRepository */
-    protected $repo;
+	/** @var OxygenRepository */
+	protected $repo;
 }

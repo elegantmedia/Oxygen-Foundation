@@ -6,9 +6,9 @@ namespace ElegantMedia\OxygenFoundation\Http\Traits\Web;
 
 trait CanCRUD
 {
-    use CanBrowse;
-    use CanCreate;
-    use CanDestroy;
-    use CanEdit;
-    use FollowsConventions;
+	use CanBrowse;
+	use CanCreate;
+	use CanDestroy;
+	use CanEdit;
+	use FollowsConventions;
 }

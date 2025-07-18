@@ -6,9 +6,9 @@ namespace ElegantMedia\OxygenFoundation\Http\Traits\Controllers;
 
 trait HasCrudOperations
 {
-    use FollowsResourceConventions;
-    use HasBrowseOperation;
-    use HasCreateOperation;
-    use HasDeleteOperation;
-    use HasEditOperation;
+	use FollowsResourceConventions;
+	use HasBrowseOperation;
+	use HasCreateOperation;
+	use HasDeleteOperation;
+	use HasEditOperation;
 }

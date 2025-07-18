@@ -9,8 +9,8 @@ use Illuminate\Http\Request;
 
 interface RepositoryInterface
 {
-    /**
-     * Fill model data from a request.
-     */
-    public function fillModelFromRequest(Request $request, ?int $id = null): Model;
+	/**
+	 * Fill model data from a request.
+	 */
+	public function fillModelFromRequest(Request $request, ?int $id = null): Model;
 }
