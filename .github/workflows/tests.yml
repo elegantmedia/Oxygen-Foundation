@@ -70,5 +70,5 @@ jobs:
       - name: Run PHPStan
         run: vendor/bin/phpstan analyse --level=5 src
 
-      - name: Run Laravel Pint
-        run: vendor/bin/pint --test
+      - name: Run PHP CS Fixer
+        run: vendor/bin/php-cs-fixer fix --dry-run --diff
