@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace ElegantMedia\OxygenFoundation\Http\Traits\Web;
 
-use ElegantMedia\OxygenFoundation\Entitities\OxygenRepository;
+use ElegantMedia\OxygenFoundation\Entities\OxygenRepository;
 use ElegantMedia\PHPToolkit\Arr;
 use ElegantMedia\SimpleRepository\Search\Filterable;
 use Illuminate\Database\Eloquent\Model;
