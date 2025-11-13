@@ -19,6 +19,7 @@ Use versions as below.
 - Fixed navbar sorting to use numeric comparison then text
 - Fixed authorization status for destroy operations (403 Forbidden)
 - Fixed namespace import in FollowsConventions trait
+- Fixed validation in controller traits to use Request::validate for Laravel 12 compatibility
 
 ## v3.0.0
 - Illuminate 10 Support
