@@ -6,4 +6,6 @@ vendor
 TODO.md
 *.cache
 .claude/
+.junie/
+.cursor/
 .phpunit.cache/
