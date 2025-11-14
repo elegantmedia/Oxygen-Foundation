@@ -46,7 +46,7 @@ class Navigator
 	 *
 	 * @return mixed
 	 */
-	public function getNavBar($navBarName = self::DEFAULT_NAME)
+	public function getNavBar($navBarName = self::DEFAULT_NAME): NavBar
 	{
 		$navBar = $this->navBars->first(function ($navBar) use ($navBarName) {
 			return $navBar->getName() === $navBarName;
@@ -107,7 +107,7 @@ class Navigator
 	 *
 	 * @return mixed
 	 */
-	public function items($navBarName = self::DEFAULT_NAME)
+	public function items($navBarName = self::DEFAULT_NAME): Collection
 	{
 		return $this->getNavBar($navBarName)->items();
 	}

@@ -18,9 +18,9 @@ class Filing
 	|
 	*/
 
-	public static function allFileNames($directory)
-	{
-		$files = File::allFiles($directory);
+    public static function allFileNames($directory): array
+    {
+        $files = File::allFiles($directory);
 
 		return array_map(function ($file) {
 			/* @var SplFileInfo $file */
@@ -28,9 +28,9 @@ class Filing
 		}, $files);
 	}
 
-	public static function fileNames($directory)
-	{
-		$files = File::files($directory);
+    public static function fileNames($directory): array
+    {
+        $files = File::files($directory);
 
 		return array_map(function ($file) {
 			/* @var SplFileInfo $file */

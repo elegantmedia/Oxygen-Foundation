@@ -173,10 +173,10 @@ class NavItem implements Arrayable
 	/**
 	 * @return string|null
 	 */
-	public function getPermission()
-	{
-		return $this->permission;
-	}
+    public function getPermission(): ?string
+    {
+        return $this->permission;
+    }
 
 	/**
 	 * @param mixed $permission
@@ -199,10 +199,10 @@ class NavItem implements Arrayable
 	/**
 	 * @return string|null
 	 */
-	public function getResource()
-	{
-		return $this->resource;
-	}
+    public function getResource(): ?string
+    {
+        return $this->resource;
+    }
 
 	/**
 	 * @return mixed
@@ -212,19 +212,19 @@ class NavItem implements Arrayable
 		return $this->attributes['text'];
 	}
 
-	public function hasUrl()
-	{
-		return ! is_null($this->getUrl());
-	}
+    public function hasUrl(): bool
+    {
+        return ! is_null($this->getUrl());
+    }
 
 	/**
 	 * @return string|null
 	 */
-	public function getUrl()
-	{
-		if (! empty($this->attributes['url'])) {
-			return $this->attributes['url'];
-		}
+    public function getUrl(): ?string
+    {
+        if (! empty($this->attributes['url'])) {
+            return $this->attributes['url'];
+        }
 
 		if ($this->hasValidResource()) {
 			return route($this->resource);
@@ -233,33 +233,33 @@ class NavItem implements Arrayable
 		return null;
 	}
 
-	public function getId()
-	{
-		// return the unique ID for function
-		if ($this->id) {
-			return $this->id;
-		}
+    public function getId(): ?string
+    {
+        // return the unique ID for function
+        if ($this->id) {
+            return $this->id;
+        }
 
-		return $this->getUrl();
-	}
+        return $this->getUrl();
+    }
 
 	/**
 	 * @return string|null
 	 */
-	public function getClass()
-	{
-		return $this->class;
-	}
+    public function getClass(): ?string
+    {
+        return $this->class;
+    }
 
-	public function setHidden($hidden = true)
-	{
-		$this->hidden = $hidden;
+    public function setHidden($hidden = true): self
+    {
+        $this->hidden = $hidden;
 
-		return $this;
-	}
+        return $this;
+    }
 
-	public function isHidden()
-	{
-		return $this->hidden;
-	}
+    public function isHidden(): bool
+    {
+        return $this->hidden;
+    }
 }

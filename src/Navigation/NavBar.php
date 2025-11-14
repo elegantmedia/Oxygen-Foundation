@@ -29,12 +29,11 @@ class NavBar
 		return $this;
 	}
 
+
 	/**
 	 * Get a list of menu items.
-	 *
-	 * @return mixed
 	 */
-	public function items()
+	public function items(): Collection
 	{
 		$sorted = $this->items->sort(function ($first, $second) {
 			// ensure orders are numbers, just for safety
@@ -58,7 +57,7 @@ class NavBar
 		return $sorted;
 	}
 
-	public function getItem($itemId)
+	public function getItem($itemId): ?NavItem
 	{
 		return $this->items->first(function ($item) use ($itemId) {
 			return $item->getId() === $itemId;
