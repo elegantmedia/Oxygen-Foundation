@@ -18,7 +18,6 @@ use Illuminate\Support\Composer;
 use Illuminate\Support\Facades\File;
 use ReflectionException;
 use Symfony\Component\Console\Input\ArrayInput;
-use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\NullOutput;
 use Symfony\Component\Finder\Exception\DirectoryNotFoundException;
 use Symfony\Component\Process\Process;
@@ -39,14 +38,14 @@ abstract class ExtensionInstallCommand extends Command implements ExtensionSetup
 
 	protected $requiredNpmDevPackages = [];
 
-    public function __construct()
-    {
-        parent::__construct();
+	public function __construct()
+	{
+		parent::__construct();
 
-        // Seed IO so this command works when instantiated outside Artisan
-        $this->setInput(new ArrayInput([]));
-        $this->setOutput(new OutputStyle($this->input, new NullOutput()));
-    }
+		// Seed IO so this command works when instantiated outside Artisan
+		$this->setInput(new ArrayInput([]));
+		$this->setOutput(new OutputStyle($this->input, new NullOutput()));
+	}
 
 	/**
 	 * @throws ClassAlreadyExistsException
@@ -212,7 +211,7 @@ abstract class ExtensionInstallCommand extends Command implements ExtensionSetup
 	 * Install a list of composer dependencies.
 	 *
 	 * @param string[] $packages
-	 * @param bool $dev
+	 * @param bool     $dev
 	 */
 	protected function installComposerDependencies(array $packages, bool $dev = false): void
 	{
@@ -488,7 +487,7 @@ abstract class ExtensionInstallCommand extends Command implements ExtensionSetup
 
 	/**
 	 * @param string $dirSuffix
-	 * @param bool $recursive
+	 * @param bool   $recursive
 	 *
 	 * @return string[]
 	 *

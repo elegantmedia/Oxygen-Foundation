@@ -13,6 +13,7 @@ class OxygenRepository extends SimpleBaseRepository
 {
 	/**
 	 * Fill model data from a request.
+	 *
 	 * @param int|string|null $id
 	 */
 	public function fillModelFromRequest(Request $request, int|string|null $id = null): Model
