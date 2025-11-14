@@ -4,121 +4,164 @@ declare(strict_types=1);
 
 namespace ElegantMedia\OxygenFoundation\Scout;
 
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Collection as SupportCollection;
+use Illuminate\Support\LazyCollection;
 use Laravel\Scout\Builder;
+use Laravel\Scout\Engines\Engine;
 
-class KeywordSearchEngine extends \Laravel\Scout\Engines\Engine
+class KeywordSearchEngine extends Engine
 {
-	/**
-	 * Update the given model in the index.
-	 */
-	public function update($models)
-	{
-		// Not required
-	}
+    /**
+     * Update the given model in the index.
+     */
+    public function update($models): void
+    {
+        // Not required for keyword search
+    }
 
-	/**
-	 * Remove the given model from the index.
-	 */
-	public function delete($models)
-	{
-		// Not required
-	}
+    /**
+     * Remove the given model from the index.
+     */
+    public function delete($models): void
+    {
+        // Not required for keyword search
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public function search(Builder $builder)
-	{
-		$query = $this->performSearch($builder);
+    /**
+     * Perform the given search on the engine.
+     */
+    public function search(Builder $builder): Collection
+    {
+        return $this->performSearch($builder)->get();
+    }
 
-		return $query->get();
-	}
+    /**
+     * Perform the given search on the engine.
+     */
+    public function paginate(Builder $builder, $perPage, $page)
+    {
+        return $this->performSearch($builder)->paginate($perPage, ['*'], 'page', $page);
+    }
 
-	protected function performSearch(Builder $builder, array $options = [])
-	{
-		$model = $builder->model;
+    /**
+     * Pluck and return the primary keys of the given results.
+     */
+    public function mapIds($results): SupportCollection
+    {
+        return $results->modelKeys();
+    }
 
-		if (! method_exists($model, 'getSearchableFields')) {
-			throw new \Exception('searchable property not defined.');
-		}
+    /**
+     * Map the given results to instances of the given model.
+     */
+    public function map(Builder $builder, $results, $model): Collection
+    {
+        return $results;
+    }
 
-		$query = $model->newQuery()->where(function ($q) use ($model, $builder) {
-			// build a few common variations of the terms
-			$searchTerms = [
-				// the search query as it's given
-				$builder->query,
+    /**
+     * Map the given results to instances of the given model via a lazy collection.
+     */
+    public function lazyMap(Builder $builder, $results, $model): LazyCollection
+    {
+        return $results->lazy();
+    }
 
-				// without all spaces, tabs and line endings
-				preg_replace('/\s+/', '', $builder->query),
-			];
+    /**
+     * Get the total count from a raw result returned by the engine.
+     */
+    public function getTotalCount($results): int
+    {
+        return $results->count();
+    }
 
-			// loop through all columns
-			foreach ($model->getSearchableFields() as $columnName) {
-				foreach ($searchTerms as $searchTerm) {
-					$q->orWhere($columnName, 'LIKE', '%' . $searchTerm . '%');
-				}
-			}
-		});
+    /**
+     * Flush all of the model's records from the engine.
+     */
+    public function flush($model): void
+    {
+        // Not required for keyword search
+    }
 
-		return $query;
-	}
+    /**
+     * Create a search index.
+     */
+    public function createIndex($name, array $options = []): mixed
+    {
+        // Not required for keyword search
+        return null;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public function paginate(Builder $builder, $perPage, $page)
-	{
-		$query = $this->performSearch($builder);
+    /**
+     * Delete a search index.
+     */
+    public function deleteIndex($name): mixed
+    {
+        // Not required for keyword search
+        return null;
+    }
 
-		return $query->paginate();
-	}
+    /**
+     * Perform the actual search query.
+     */
+    protected function performSearch(Builder $builder): \Illuminate\Database\Eloquent\Builder
+    {
+        $model = $builder->model;
 
-	/**
-	 * Pluck and return the primary keys of the given results.
-	 */
-	public function mapIds($results)
-	{
-		return $results->map(function ($result) {
-			return $result->getKey();
-		});
-	}
+        if (! method_exists($model, 'getSearchableFields')) {
+            throw new \RuntimeException(
+                'Model must implement getSearchableFields() method to use keyword search.'
+            );
+        }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public function map(Builder $builder, $results, $model)
-	{
-		return $results;
-	}
+        $searchableFields = $model->getSearchableFields();
+        if (empty($searchableFields)) {
+            throw new \RuntimeException('No searchable fields defined in the model.');
+        }
 
-	/**
-	 * Map the given results to instances of the given model.
-	 */
-	public function getTotalCount($results)
-	{
-		return $results->count();
-	}
+        $query = $model::query();
 
-	/**
-	 * Flush all of the model's records from the engine.
-	 */
-	public function flush($model)
-	{
-		// Not required
-	}
+        if (! empty($builder->query)) {
+            $query->where(function ($q) use ($searchableFields, $builder) {
+                $searchTerms = $this->prepareSearchTerms($builder->query);
 
-	public function lazyMap(Builder $builder, $results, $model)
-	{
-		return $results->lazy();
-	}
+                foreach ($searchableFields as $field) {
+                    foreach ($searchTerms as $term) {
+                        // Use parameter binding to prevent SQL injection
+                        $q->orWhere($field, 'LIKE', $term);
+                    }
+                }
+            });
+        }
 
-	public function createIndex($name, array $options = [])
-	{
-		// TODO: Implement createIndex() method.
-	}
+        // Apply where clauses
+        foreach ($builder->wheres as $key => $value) {
+            $query->where($key, $value);
+        }
 
-	public function deleteIndex($name)
-	{
-		// TODO: Implement deleteIndex() method.
-	}
+        // Apply order
+        foreach ($builder->orders as $order) {
+            $query->orderBy($order['column'], $order['direction']);
+        }
+
+        return $query;
+    }
+
+    /**
+     * Prepare search terms with proper escaping.
+     */
+    protected function prepareSearchTerms(string $query): array
+    {
+        // Escape special characters for LIKE queries
+        $escaped = str_replace(['\\', '%', '_'], ['\\\\', '\\%', '\\_'], $query);
+
+        return [
+            // Original search query with wildcards
+            '%' . $escaped . '%',
+
+            // Without spaces (for matching concatenated values)
+            '%' . str_replace([' ', "\t", "\n", "\r"], '', $escaped) . '%',
+        ];
+    }
 }

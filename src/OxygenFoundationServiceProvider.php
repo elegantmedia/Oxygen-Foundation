@@ -13,7 +13,7 @@ use ElegantMedia\OxygenFoundation\Core\Pathfinder;
 use ElegantMedia\OxygenFoundation\Macros\RegisterResponseMacros;
 use ElegantMedia\OxygenFoundation\Macros\RegisterSchemaMacros;
 use ElegantMedia\OxygenFoundation\Navigation\Navigator;
-use ElegantMedia\OxygenFoundation\Scout\Engines\SecureKeywordEngine;
+use ElegantMedia\OxygenFoundation\Scout\KeywordSearchEngine;
 use Illuminate\Support\ServiceProvider;
 use Laravel\Scout\EngineManager;
 
@@ -68,10 +68,10 @@ class OxygenFoundationServiceProvider extends ServiceProvider
 		}
 	}
 
-	protected function bootScoutSearchEngines(): void
-	{
-		$this->app[EngineManager::class]->extend('keyword', fn () => new SecureKeywordEngine());
-	}
+    protected function bootScoutSearchEngines(): void
+    {
+        $this->app[EngineManager::class]->extend('keyword', fn () => new KeywordSearchEngine());
+    }
 
 	protected function registerCommands(): void
 	{
