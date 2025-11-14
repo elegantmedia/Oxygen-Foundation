@@ -20,6 +20,7 @@ Use versions as below.
 - Fixed authorization status for destroy operations (403 Forbidden)
 - Fixed namespace import in FollowsConventions trait
 - Fixed validation in controller traits to use Request::validate for Laravel 12 compatibility
+ - Secured legacy CreatesUniqueTokens logic and added high-resolution timestamp tokens; improved HasSecureToken timestamp precision
 
 ## v3.0.0
 - Illuminate 10 Support
