@@ -14,51 +14,50 @@ use Orchestra\Testbench\TestCase;
 
 class UuidContractModel extends Model implements HasUuidContract
 {
-    use HasUuid;
+	use HasUuid;
 
-    protected $table = 'uuid_contract_models';
+	protected $table = 'uuid_contract_models';
 
-    protected $fillable = ['uuid', 'name'];
+	protected $fillable = ['uuid', 'name'];
 }
 
 class HasUuidContractIntegrationTest extends TestCase
 {
-    use RefreshDatabase;
+	use RefreshDatabase;
 
-    protected function setUp(): void
-    {
-        parent::setUp();
+	protected function setUp(): void
+	{
+		parent::setUp();
 
-        Schema::create('uuid_contract_models', function (Blueprint $table) {
-            $table->id();
-            $table->string('uuid')->unique();
-            $table->string('name')->nullable();
-            $table->timestamps();
-        });
-    }
+		Schema::create('uuid_contract_models', function (Blueprint $table) {
+			$table->id();
+			$table->string('uuid')->unique();
+			$table->string('name')->nullable();
+			$table->timestamps();
+		});
+	}
 
-    protected function tearDown(): void
-    {
-        Schema::dropIfExists('uuid_contract_models');
-        parent::tearDown();
-    }
+	protected function tearDown(): void
+	{
+		Schema::dropIfExists('uuid_contract_models');
+		parent::tearDown();
+	}
 
-    public function testTraitImplementsContractMethods(): void
-    {
-        $model = new UuidContractModel();
-        $this->assertSame('uuid', $model->getUuidColumn());
-    }
+	public function testTraitImplementsContractMethods(): void
+	{
+		$model = new UuidContractModel();
+		$this->assertSame('uuid', $model->getUuidColumn());
+	}
 
-    public function testFindByUuidReturnsModelOrNull(): void
-    {
-        $created = UuidContractModel::create(['name' => 'Foo']);
-        $uuid = $created->uuid; // set in creating hook
+	public function testFindByUuidReturnsModelOrNull(): void
+	{
+		$created = UuidContractModel::create(['name' => 'Foo']);
+		$uuid = $created->uuid; // set in creating hook
 
-        $found = UuidContractModel::findByUuid($uuid);
-        $this->assertNotNull($found);
-        $this->assertSame($uuid, $found->uuid);
+		$found = UuidContractModel::findByUuid($uuid);
+		$this->assertNotNull($found);
+		$this->assertSame($uuid, $found->uuid);
 
-        $this->assertNull(UuidContractModel::findByUuid('non-existent-uuid'));
-    }
+		$this->assertNull(UuidContractModel::findByUuid('non-existent-uuid'));
+	}
 }
-

@@ -40,15 +40,15 @@ trait HasSecureToken
 	 *
 	 * @throws TokenGenerationException
 	 */
-    public static function generateTimestampedToken(string $field, int $randomLength = 24): string
-    {
-        $maxAttempts = 10;
-        $attempts = 0;
+	public static function generateTimestampedToken(string $field, int $randomLength = 24): string
+	{
+		$maxAttempts = 10;
+		$attempts = 0;
 
-        while ($attempts < $maxAttempts) {
-            // Use monotonic high-resolution time to avoid float precision issues
-            $timestamp = base_convert((string) hrtime(true), 10, 36);
-            $token = $timestamp . '_' . Str::random($randomLength);
+		while ($attempts < $maxAttempts) {
+			// Use monotonic high-resolution time to avoid float precision issues
+			$timestamp = base_convert((string) hrtime(true), 10, 36);
+			$token = $timestamp . '_' . Str::random($randomLength);
 
 			if (! static::where($field, $token)->exists()) {
 				return $token;

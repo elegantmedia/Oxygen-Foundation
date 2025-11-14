@@ -20,7 +20,7 @@ class BaseRepositoryTest extends TestCase
 	{
 		parent::setUp();
 
-        $this->model = Mockery::mock(Model::class);
+		$this->model = Mockery::mock(Model::class);
 		$this->repository = new class ($this->model) extends BaseRepository {
 			protected Model $model;
 
@@ -48,14 +48,14 @@ class BaseRepositoryTest extends TestCase
 
 	public function testFillModelFromRequestCreatesNewModelWhenNoId(): void
 	{
-        $this->model->shouldReceive('getFillable')->andReturn(['name']);
+		$this->model->shouldReceive('getFillable')->andReturn(['name']);
 
-        $request = Request::create('/', 'POST', [
-            'name' => 'Test',
-            '_token' => 'abc',
-            '_method' => 'POST',
-            'extra' => 'ignore-me',
-        ]);
+		$request = Request::create('/', 'POST', [
+			'name' => 'Test',
+			'_token' => 'abc',
+			'_method' => 'POST',
+			'extra' => 'ignore-me',
+		]);
 
 		$this->model->shouldReceive('fill')->once()->with(['name' => 'Test']);
 		$this->model->shouldReceive('save')->once();
@@ -68,14 +68,14 @@ class BaseRepositoryTest extends TestCase
 
 	public function testFillModelFromRequestUpdatesExistingModel(): void
 	{
-        $this->model->shouldReceive('getFillable')->andReturn(['name']);
+		$this->model->shouldReceive('getFillable')->andReturn(['name']);
 
-        $request = Request::create('/', 'PUT', [
-            'name' => 'Updated',
-            '_token' => 'abc',
-            '_method' => 'PUT',
-            'other' => 'ignore-me',
-        ]);
+		$request = Request::create('/', 'PUT', [
+			'name' => 'Updated',
+			'_token' => 'abc',
+			'_method' => 'PUT',
+			'other' => 'ignore-me',
+		]);
 
 		$this->model->shouldReceive('fill')->once()->with(['name' => 'Updated']);
 		$this->model->shouldReceive('save')->once();

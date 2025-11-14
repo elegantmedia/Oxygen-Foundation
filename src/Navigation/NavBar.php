@@ -29,7 +29,6 @@ class NavBar
 		return $this;
 	}
 
-
 	/**
 	 * Get a list of menu items.
 	 */

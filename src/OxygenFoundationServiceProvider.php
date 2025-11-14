@@ -68,10 +68,10 @@ class OxygenFoundationServiceProvider extends ServiceProvider
 		}
 	}
 
-    protected function bootScoutSearchEngines(): void
-    {
-        $this->app[EngineManager::class]->extend('keyword', fn () => new KeywordSearchEngine());
-    }
+	protected function bootScoutSearchEngines(): void
+	{
+		$this->app[EngineManager::class]->extend('keyword', fn () => new KeywordSearchEngine());
+	}
 
 	protected function registerCommands(): void
 	{

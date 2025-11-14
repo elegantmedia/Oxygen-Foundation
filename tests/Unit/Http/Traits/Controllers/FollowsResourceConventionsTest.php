@@ -11,21 +11,20 @@ use Illuminate\Validation\ValidationException;
 
 class FollowsResourceConventionsTest extends TestCase
 {
-    public function testStoreOrUpdateRequestValidatesUsingRequest(): void
-    {
-        $controller = new class () {
-            use FollowsResourceConventions;
+	public function testStoreOrUpdateRequestValidatesUsingRequest(): void
+	{
+		$controller = new class () {
+			use FollowsResourceConventions;
 
-            public function callStore(Request $request, ?array $rules = null, ?array $messages = null)
-            {
-                return $this->storeOrUpdateRequest($request, null, $rules, $messages);
-            }
-        };
+			public function callStore(Request $request, ?array $rules = null, ?array $messages = null)
+			{
+				return $this->storeOrUpdateRequest($request, null, $rules, $messages);
+			}
+		};
 
-        $request = Request::create('/', 'POST', []);
+		$request = Request::create('/', 'POST', []);
 
-        $this->expectException(ValidationException::class);
-        $controller->callStore($request, ['name' => 'required']);
-    }
+		$this->expectException(ValidationException::class);
+		$controller->callStore($request, ['name' => 'required']);
+	}
 }
-

@@ -127,7 +127,9 @@ class ExtensionInstallCommandTest extends TestCase
 		// Create a command that simulates a failed composer install
 		$command = new class () extends ExtensionInstallCommand {
 			protected $signature = 'test:command {--install_dependencies=true}';
+
 			protected $description = 'Test Command';
+
 			protected $composerRequire = ['invalid/package'];
 
 			public function getExtensionServiceProvider(): string

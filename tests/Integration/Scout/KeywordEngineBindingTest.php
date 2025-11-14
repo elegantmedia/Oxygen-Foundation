@@ -10,13 +10,12 @@ use Laravel\Scout\EngineManager;
 
 class KeywordEngineBindingTest extends TestCase
 {
-    public function testKeywordDriverResolvesToKeywordSearchEngine(): void
-    {
-        /** @var EngineManager $manager */
-        $manager = app(EngineManager::class);
-        $engine = $manager->driver('keyword');
+	public function testKeywordDriverResolvesToKeywordSearchEngine(): void
+	{
+		/** @var EngineManager $manager */
+		$manager = app(EngineManager::class);
+		$engine = $manager->driver('keyword');
 
-        $this->assertInstanceOf(KeywordSearchEngine::class, $engine);
-    }
+		$this->assertInstanceOf(KeywordSearchEngine::class, $engine);
+	}
 }
-

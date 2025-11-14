@@ -121,20 +121,20 @@ trait FollowsResourceConventions
 		return $route;
 	}
 
-    protected function storeOrUpdateRequest(
-        Request $request,
-        ?int $id = null,
-        ?array $rules = null,
-        ?array $messages = null
-    ): Model {
-        // validations
-        if ($rules) {
-            $request->validate($rules, $messages ?? []);
-        }
+	protected function storeOrUpdateRequest(
+		Request $request,
+		?int $id = null,
+		?array $rules = null,
+		?array $messages = null
+	): Model {
+		// validations
+		if ($rules) {
+			$request->validate($rules, $messages ?? []);
+		}
 
-        // save and return model
-        return $this->repo->fillModelFromRequest($request, $id);
-    }
+		// save and return model
+		return $this->repo->fillModelFromRequest($request, $id);
+	}
 
 	protected function newSearchFilter(bool $withDefaults = true): Filterable
 	{

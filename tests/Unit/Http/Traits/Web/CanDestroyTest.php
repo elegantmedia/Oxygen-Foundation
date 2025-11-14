@@ -10,39 +10,40 @@ use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class CanDestroyTest extends TestCase
 {
-    public function testDestroyUnauthorizedRespondsWith403(): void
-    {
-        $controller = new class () {
-            use CanDestroy;
+	public function testDestroyUnauthorizedRespondsWith403(): void
+	{
+		$controller = new class () {
+			use CanDestroy;
 
-            public function isDestroyAllowed(): bool
-            {
-                return false;
-            }
+			public function isDestroyAllowed(): bool
+			{
+				return false;
+			}
 
-            public function getIndexRouteName(): string
-            {
-                return 'home';
-            }
+			public function getIndexRouteName(): string
+			{
+				return 'home';
+			}
 
-            // Dummy repo property for completeness
-            public $repo;
+			// Dummy repo property for completeness
+			public $repo;
 
-            public function __construct()
-            {
-                $this->repo = new class () {
-                    public function delete($id): void {}
-                };
-            }
-        };
+			public function __construct()
+			{
+				$this->repo = new class () {
+					public function delete($id): void
+					{
+					}
+				};
+			}
+		};
 
-        try {
-            $controller->destroy(456);
-            $this->fail('Expected HttpException to be thrown');
-        } catch (HttpException $e) {
-            $this->assertSame(403, $e->getStatusCode());
-            $this->assertStringContainsString('not authorized', $e->getMessage());
-        }
-    }
+		try {
+			$controller->destroy(456);
+			$this->fail('Expected HttpException to be thrown');
+		} catch (HttpException $e) {
+			$this->assertSame(403, $e->getStatusCode());
+			$this->assertStringContainsString('not authorized', $e->getMessage());
+		}
+	}
 }
-

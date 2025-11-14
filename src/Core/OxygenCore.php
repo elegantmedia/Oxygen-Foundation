@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace ElegantMedia\OxygenFoundation\Core;
 
-
 class OxygenCore
 {
 	public static function getUserClass(): ?string

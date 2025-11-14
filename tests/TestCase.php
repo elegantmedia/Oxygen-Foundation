@@ -15,13 +15,13 @@ abstract class TestCase extends Orchestra
 		parent::setUp();
 	}
 
-    protected function getPackageProviders($app): array
-    {
-        return [
-            OxygenFoundationServiceProvider::class,
-            ScoutServiceProvider::class,
-        ];
-    }
+	protected function getPackageProviders($app): array
+	{
+		return [
+			OxygenFoundationServiceProvider::class,
+			ScoutServiceProvider::class,
+		];
+	}
 
 	protected function getEnvironmentSetUp($app): void
 	{

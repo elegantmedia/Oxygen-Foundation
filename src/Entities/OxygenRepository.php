@@ -28,15 +28,15 @@ class OxygenRepository extends SimpleBaseRepository
 			throw new ModelNotFoundException();
 		}
 
-        // Prefer validated data if available (FormRequest), otherwise restrict to fillable fields
-        if (method_exists($request, 'validated')) {
-            $data = $request->validated();
-        } else {
-            $fillable = $entity->getFillable();
-            $data = empty($fillable) ? $request->except(['_token', '_method']) : $request->only($fillable);
-        }
+		// Prefer validated data if available (FormRequest), otherwise restrict to fillable fields
+		if (method_exists($request, 'validated')) {
+			$data = $request->validated();
+		} else {
+			$fillable = $entity->getFillable();
+			$data = empty($fillable) ? $request->except(['_token', '_method']) : $request->only($fillable);
+		}
 
-        $entity->fill($data);
+		$entity->fill($data);
 
 		if (method_exists($this, 'beforeSavingModel')) {
 			$this->beforeSavingModel($request, $entity);

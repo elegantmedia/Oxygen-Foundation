@@ -129,16 +129,16 @@ trait FollowsConventions
 		return $route;
 	}
 
-    protected function storeOrUpdateRequest(Request $request, $id = null, $rules = null, $messages = null): Model
-    {
-        // validations
-        if ($rules) {
-            $request->validate($rules, $messages ?? []);
-        }
+	protected function storeOrUpdateRequest(Request $request, $id = null, $rules = null, $messages = null): Model
+	{
+		// validations
+		if ($rules) {
+			$request->validate($rules, $messages ?? []);
+		}
 
-        // save and return model
-        return $this->repo->fillModelFromRequest($request, $id);
-    }
+		// save and return model
+		return $this->repo->fillModelFromRequest($request, $id);
+	}
 
 	/**
 	 * @param bool $withDefaults

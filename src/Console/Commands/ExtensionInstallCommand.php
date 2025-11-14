@@ -229,6 +229,7 @@ abstract class ExtensionInstallCommand extends Command implements ExtensionSetup
 			if ($process->getErrorOutput()) {
 				$errorMessage .= ': ' . trim($process->getErrorOutput());
 			}
+
 			throw new \RuntimeException($errorMessage);
 		}
 	}
