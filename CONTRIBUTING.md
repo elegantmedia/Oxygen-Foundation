@@ -10,3 +10,19 @@
 - **One pull request per feature** - If you want to do more than one thing, send multiple pull requests.
 
 - **Send coherent history** - Make sure each individual commit in your pull request is meaningful. If you had to make multiple intermediate commits while developing, please [squash them](http://www.git-scm.com/book/en/v2/Git-Tools-Rewriting-History#Changing-Multiple-Commit-Messages) before submitting.
+
+## Run On Your Machine
+
+```bash
+# Run code style check
+composer check-style
+
+# Fix code style issues
+composer fix-style
+
+# Run static analysis
+vendor/bin/phpstan analyse --level=5 src --memory-limit 1G
+
+# Run tests
+vendor/bin/phpunit
+```
