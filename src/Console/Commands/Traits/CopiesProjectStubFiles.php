@@ -44,8 +44,8 @@ trait CopiesProjectStubFiles
 		//
 		// From above examples, we have to caputure `create_dummies_table.php` using regex
 
-		preg_match('/[\d]{1,4}_?(?:\d{1,4}_)+(.*)/', $basename, $matches);
-		if (! is_countable($matches) || count($matches) < 1) {
+		$matchCount = preg_match('/[\d]{1,4}_?(?:\d{1,4}_)+(.*)/', $basename, $matches);
+		if ($matchCount !== 1 || ! isset($matches[1])) {
 			throw new FileInvalidException("Unable to parse migration filename `{$basename}` at `{$stubPath}`.");
 		}
 		$filename = Timing::microTimestamp() . '_' . $matches[1];

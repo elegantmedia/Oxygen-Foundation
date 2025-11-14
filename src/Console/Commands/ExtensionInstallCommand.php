@@ -198,9 +198,10 @@ abstract class ExtensionInstallCommand extends Command implements ExtensionSetup
 	/**
 	 * Install a list of composer dependencies.
 	 *
-	 * @param false $dev
+	 * @param string[] $packages
+	 * @param bool $dev
 	 */
-	protected function installComposerDependencies($packages, bool $dev = false): void
+	protected function installComposerDependencies(array $packages, bool $dev = false): void
 	{
 		if (! count($packages)) {
 			return;
@@ -219,9 +220,7 @@ abstract class ExtensionInstallCommand extends Command implements ExtensionSetup
 		$process->setTimeout(null);
 
 		$exitCode = $process->run(function ($type, $output) {
-			if ($this->output) {
-				$this->output->write($output);
-			}
+			$this->output?->write($output);
 		});
 
 		if ($exitCode !== 0) {
@@ -475,15 +474,19 @@ abstract class ExtensionInstallCommand extends Command implements ExtensionSetup
 	}
 
 	/**
-	 * @param false $recursive
+	 * @param string $dirSuffix
+	 * @param bool $recursive
 	 *
 	 * @return string[]
 	 *
 	 * @throws ReflectionException
+	 * @throws DirectoryNotFoundException
 	 */
-	protected function getFilesFromPackage($dirSuffix, $recursive = false)
+	protected function getFilesFromPackage(string $dirSuffix, bool $recursive = false): array
 	{
-		$targetDir = Reflector::classPath($this, './../../' . $dirSuffix);
+		$packageRoot = dirname(Reflector::classPath($this), 2);
+		$normalizedSuffix = trim($dirSuffix, DIRECTORY_SEPARATOR . '/\\');
+		$targetDir = $packageRoot . DIRECTORY_SEPARATOR . $normalizedSuffix;
 
 		// Look for package files
 
@@ -491,10 +494,8 @@ abstract class ExtensionInstallCommand extends Command implements ExtensionSetup
 			throw new DirectoryNotFoundException("Directory `$targetDir` not found");
 		}
 
-		if ($recursive) {
-			return Filing::allFileNames($targetDir);
-		}
-
-		return Filing::fileNames($targetDir);
+		return $recursive
+			? Filing::allFileNames($targetDir)
+			: Filing::fileNames($targetDir);
 	}
 }
