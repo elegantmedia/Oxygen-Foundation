@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace ElegantMedia\OxygenFoundation\Tests;
 
 use ElegantMedia\OxygenFoundation\OxygenFoundationServiceProvider;
+use Laravel\Scout\ScoutServiceProvider;
 use Orchestra\Testbench\TestCase as Orchestra;
 
 abstract class TestCase extends Orchestra
@@ -14,12 +15,13 @@ abstract class TestCase extends Orchestra
 		parent::setUp();
 	}
 
-	protected function getPackageProviders($app): array
-	{
-		return [
-			OxygenFoundationServiceProvider::class,
-		];
-	}
+    protected function getPackageProviders($app): array
+    {
+        return [
+            OxygenFoundationServiceProvider::class,
+            ScoutServiceProvider::class,
+        ];
+    }
 
 	protected function getEnvironmentSetUp($app): void
 	{
