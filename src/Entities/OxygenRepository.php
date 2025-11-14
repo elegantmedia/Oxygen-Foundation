@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace ElegantMedia\OxygenFoundation\Entities;
 
-use ElegantMedia\SimpleRepository\SimpleBaseRepository;
+use ElegantMedia\SimpleRepository\Repository\BaseRepository as SimpleBaseRepository;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
@@ -28,8 +28,15 @@ class OxygenRepository extends SimpleBaseRepository
 			throw new ModelNotFoundException();
 		}
 
-		$data = $request->all();
-		$entity->fill($data);
+        // Prefer validated data if available (FormRequest), otherwise restrict to fillable fields
+        if (method_exists($request, 'validated')) {
+            $data = $request->validated();
+        } else {
+            $fillable = $entity->getFillable();
+            $data = empty($fillable) ? $request->except(['_token', '_method']) : $request->only($fillable);
+        }
+
+        $entity->fill($data);
 
 		if (method_exists($this, 'beforeSavingModel')) {
 			$this->beforeSavingModel($request, $entity);

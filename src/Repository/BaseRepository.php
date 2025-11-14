@@ -27,8 +27,15 @@ abstract class BaseRepository extends SimpleRepository implements RepositoryInte
 			throw new ModelNotFoundException();
 		}
 
-		$data = $request->all();
-		$entity->fill($data);
+        // Prefer validated data if available (FormRequest), otherwise restrict to fillable fields
+        if (method_exists($request, 'validated')) {
+            $data = $request->validated();
+        } else {
+            $fillable = $entity->getFillable();
+            $data = empty($fillable) ? $request->except(['_token', '_method']) : $request->only($fillable);
+        }
+
+        $entity->fill($data);
 
 		if (method_exists($this, 'beforeSavingModel')) {
 			$this->beforeSavingModel($request, $entity);
