@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace ElegantMedia\OxygenFoundation\Support;
 
 use Illuminate\Support\Facades\File;
@@ -6,7 +9,6 @@ use Symfony\Component\Finder\SplFileInfo;
 
 class Filing
 {
-
 	/*
 	|--------------------------------------------------------------------------
 	| Illuminate/Support Functions
@@ -16,7 +18,7 @@ class Filing
 	|
 	*/
 
-	public static function allFileNames($directory)
+	public static function allFileNames($directory): array
 	{
 		$files = File::allFiles($directory);
 
@@ -26,7 +28,7 @@ class Filing
 		}, $files);
 	}
 
-	public static function fileNames($directory)
+	public static function fileNames($directory): array
 	{
 		$files = File::files($directory);
 

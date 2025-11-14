@@ -1,18 +1,19 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ElegantMedia\OxygenFoundation\Macros;
 
 use ElegantMedia\OxygenFoundation\Http\Response as BaseResponse;
 use Illuminate\Contracts\Pagination\Paginator;
+use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Support\Facades\Response;
+use InvalidArgumentException;
 
 trait RegisterResponseMacros
 {
-
 	/**
-	 *
-	 * Register Custom API Responses
-	 *
+	 * Register Custom API Responses.
 	 */
 	protected function registerResponseMacros(): void
 	{
@@ -21,22 +22,24 @@ trait RegisterResponseMacros
 	}
 
 	/**
-	 *
-	 * Register Success Responses
-	 *
+	 * Register Success Responses.
 	 */
 	protected function registerSuccessMacros(): void
 	{
 		// success
 		Response::macro('apiSuccess', function ($payload = null, $message = '') {
 			return Response::json([
-				'payload'	=> $payload,
-				'message' 	=> $message,
-				'result' 	=> true,
+				'payload' => $payload,
+				'message' => $message,
+				'result' => true,
 			]);
 		});
 
 		Response::macro('apiSuccessPaginated', function (Paginator $paginator, $message = '', $customData = []) {
+			if (! $paginator instanceof Arrayable) {
+				throw new InvalidArgumentException('Paginator instance must implement Arrayable.');
+			}
+
 			$paginatorArray = $paginator->toArray();
 			if (isset($paginatorArray['data'])) {
 				unset($paginatorArray['data']);
@@ -46,16 +49,13 @@ trait RegisterResponseMacros
 				'payload' => $paginator->items(),
 				'paginator' => $paginatorArray,
 				'message' => $message,
-				'result'  => true,
+				'result' => true,
 			]));
 		});
 	}
 
-
 	/**
-	 *
-	 * Register Error Responses
-	 *
+	 * Register Error Responses.
 	 */
 	protected function registerErrorMacros(): void
 	{
@@ -64,22 +64,19 @@ trait RegisterResponseMacros
 			$message = 'Authentication failed. Try to login again.',
 			$responseCode = BaseResponse::HTTP_UNAUTHORIZED
 		) {
-
 			return Response::json([
 				'message' => $message,
 				'payload' => null,
-				'result'  => false,
+				'result' => false,
 			], $responseCode); // 401 Error
 		});
 
-
 		// Generic API authorization error
 		Response::macro('apiErrorAccessDenied', function ($message = 'Access denied.') {
-
 			return Response::json([
 				'message' => $message,
 				'payload' => null,
-				'result'  => false,
+				'result' => false,
 			], BaseResponse::HTTP_FORBIDDEN); // 403 Error
 		});
 
@@ -91,11 +88,10 @@ trait RegisterResponseMacros
 				$payload = null,
 				$statusCode = BaseResponse::HTTP_UNPROCESSABLE_ENTITY
 			) {
-
 				return Response::json([
 					'message' => $message,
 					'payload' => $payload,
-					'result'  => false,
+					'result' => false,
 				], $statusCode);
 			}
 		);

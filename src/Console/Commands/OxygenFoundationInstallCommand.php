@@ -1,13 +1,14 @@
 <?php
 
+declare(strict_types=1);
 
 namespace ElegantMedia\OxygenFoundation\Console\Commands;
 
 class OxygenFoundationInstallCommand extends \Illuminate\Console\Command
 {
+	protected $signature = 'oxygen:foundation:install';
 
-	protected $signature 	= 'oxygen:foundation:install';
-	protected $description 	= 'Run Oxygen Foundation Installer';
+	protected $description = 'Run Oxygen Foundation Installer';
 
 	public function handle()
 	{

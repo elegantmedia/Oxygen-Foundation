@@ -1,10 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ElegantMedia\OxygenFoundation\Console\Commands\Developer;
 
 class RefreshDatabaseCommand extends \Illuminate\Console\Command
 {
-
 	/**
 	 * The name and signature of the console command.
 	 *
@@ -21,8 +22,6 @@ class RefreshDatabaseCommand extends \Illuminate\Console\Command
 
 	/**
 	 * Create a new command instance.
-	 *
-	 * @return void
 	 */
 	public function __construct()
 	{
@@ -39,16 +38,16 @@ class RefreshDatabaseCommand extends \Illuminate\Console\Command
 		$this->call('db:wipe');
 
 		if ($this->option('nomigrate')) {
-			return;
+			return self::SUCCESS;
 		}
 
 		$this->call('migrate');
 
-		if (!$this->option('noseed')) {
+		if (! $this->option('noseed')) {
 			$this->call('db:seed');
 			$this->call('oxygen:seed');
 		}
 
-		return 0;
+		return self::SUCCESS;
 	}
 }

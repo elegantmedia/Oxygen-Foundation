@@ -1,38 +1,39 @@
 <?php
 
+declare(strict_types=1);
 
 namespace ElegantMedia\OxygenFoundation\Entities;
 
-use ElegantMedia\SimpleRepository\SimpleBaseRepository;
+use ElegantMedia\SimpleRepository\Repository\BaseRepository as SimpleBaseRepository;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 
 class OxygenRepository extends SimpleBaseRepository
 {
-
 	/**
+	 * Fill model data from a request.
 	 *
-	 * Fill model data from a request
-	 *
-	 * @param Request $request
-	 * @param null $id
-	 *
-	 * @return Model
+	 * @param int|string|null $id
 	 */
-	public function fillModelFromRequest(Request $request, $id = null): Model
+	public function fillModelFromRequest(Request $request, int|string|null $id = null): Model
 	{
-		if (!$id) {
-			$entity = $this->newModel();
-		} else {
-			$entity = $this->find($id);
-		}
+		$entity = $id === null
+			? $this->newModel()
+			: $this->find($id);
 
-		if (!$entity) {
+		if (! $entity instanceof Model) {
 			throw new ModelNotFoundException();
 		}
 
-		$data = $request->all();
+		// Prefer validated data if available (FormRequest), otherwise restrict to fillable fields
+		if (method_exists($request, 'validated')) {
+			$data = $request->validated();
+		} else {
+			$fillable = $entity->getFillable();
+			$data = empty($fillable) ? $request->except(['_token', '_method']) : $request->only($fillable);
+		}
+
 		$entity->fill($data);
 
 		if (method_exists($this, 'beforeSavingModel')) {

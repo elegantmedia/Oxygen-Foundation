@@ -1,0 +1,95 @@
+<?php
+
+declare(strict_types=1);
+
+namespace ElegantMedia\OxygenFoundation\Tests\Unit\Repository;
+
+use ElegantMedia\OxygenFoundation\Repository\BaseRepository;
+use ElegantMedia\OxygenFoundation\Tests\TestCase;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\Request;
+use Mockery;
+
+class BaseRepositoryTest extends TestCase
+{
+	private BaseRepository $repository;
+
+	private Model $model;
+
+	protected function setUp(): void
+	{
+		parent::setUp();
+
+		$this->model = Mockery::mock(Model::class);
+		$this->repository = new class ($this->model) extends BaseRepository {
+			protected Model $model;
+
+			public function __construct(Model $model)
+			{
+				$this->model = $model;
+			}
+
+			public function getModel(): Model
+			{
+				return $this->model;
+			}
+
+			public function newModel(): Model
+			{
+				return clone $this->model;
+			}
+
+			public function find(string|int $id, array $with = []): ?Model
+			{
+				return $id ? $this->model : null;
+			}
+		};
+	}
+
+	public function testFillModelFromRequestCreatesNewModelWhenNoId(): void
+	{
+		$this->model->shouldReceive('getFillable')->andReturn(['name']);
+
+		$request = Request::create('/', 'POST', [
+			'name' => 'Test',
+			'_token' => 'abc',
+			'_method' => 'POST',
+			'extra' => 'ignore-me',
+		]);
+
+		$this->model->shouldReceive('fill')->once()->with(['name' => 'Test']);
+		$this->model->shouldReceive('save')->once();
+		$this->model->shouldReceive('isDirty')->once()->andReturn(false);
+
+		$result = $this->repository->fillModelFromRequest($request);
+
+		$this->assertInstanceOf(Model::class, $result);
+	}
+
+	public function testFillModelFromRequestUpdatesExistingModel(): void
+	{
+		$this->model->shouldReceive('getFillable')->andReturn(['name']);
+
+		$request = Request::create('/', 'PUT', [
+			'name' => 'Updated',
+			'_token' => 'abc',
+			'_method' => 'PUT',
+			'other' => 'ignore-me',
+		]);
+
+		$this->model->shouldReceive('fill')->once()->with(['name' => 'Updated']);
+		$this->model->shouldReceive('save')->once();
+		$this->model->shouldReceive('isDirty')->once()->andReturn(true);
+		$this->model->shouldReceive('refresh')->once()->andReturn($this->model);
+
+		$result = $this->repository->fillModelFromRequest($request, 1);
+
+		$this->assertInstanceOf(Model::class, $result);
+	}
+
+	protected function tearDown(): void
+	{
+		Mockery::close();
+		parent::tearDown();
+	}
+}

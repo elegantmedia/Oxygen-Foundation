@@ -1,13 +1,11 @@
 <?php
 
+declare(strict_types=1);
 
 namespace ElegantMedia\OxygenFoundation\Tests\Feature;
 
-use Illuminate\Support\Facades\File;
-
 class FoundationInstallTest extends TestCase
 {
-
 	protected function setUp(): void
 	{
 		parent::setUp();

@@ -1,16 +1,13 @@
 <?php
 
+declare(strict_types=1);
 
 namespace ElegantMedia\OxygenFoundation\Http\Traits\Web;
 
 trait CanBrowse
 {
-
 	/**
-	 *
-	 * Index Results filter. Override this method to customise the results
-	 *
-	 * @return \ElegantMedia\SimpleRepository\Search\Filterable
+	 * Index Results filter. Override this method to customise the results.
 	 */
 	protected function getIndexFilter(): \ElegantMedia\SimpleRepository\Search\Filterable
 	{
@@ -20,8 +17,7 @@ trait CanBrowse
 	}
 
 	/**
-	 *
-	 * Index method of the controller
+	 * Index method of the controller.
 	 *
 	 * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
 	 */

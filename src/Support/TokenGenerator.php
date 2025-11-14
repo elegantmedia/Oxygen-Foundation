@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ElegantMedia\OxygenFoundation\Support;
 
 use ElegantMedia\OxygenFoundation\Exceptions\TokenGenerationException;
@@ -8,16 +10,12 @@ use Illuminate\Database\Eloquent\Model;
 
 class TokenGenerator
 {
-
 	/**
+	 * Create a unique token based on a DB column.
 	 *
-	 * Create a unique token based on a DB column
-	 *
-	 * @param Model $model
-	 * @param $dbColumn
 	 * @param int $minChars
 	 * @param int $maxChars
-	 * @return string|null
+	 *
 	 * @throws TokenGenerationException
 	 */
 	public static function getCodeForModel(Model $model, $dbColumn, $minChars = 4, $maxChars = 8): ?string
@@ -39,15 +37,16 @@ class TokenGenerator
 			// loop 100k times
 			for ($i = 0, $iMax = 100000; $i < $iMax; $i++) {
 				$code = self::generate($x);
-				$entity = $model::where($dbColumn, $code)->first();
-				if (!$entity) {
+				$entity = $model->newQuery()->where($dbColumn, $code)->first();
+				if (! $entity) {
 					$uniqueFound = true;
+
 					break 2;
 				}
 			}
 		}
 
-		if (!$uniqueFound) {
+		if (! $uniqueFound) {
 			throw new TokenGenerationException(
 				"Failed to generate a new code for the field `$dbColumn`. Limit of {$maxChars} exhausted"
 			);
@@ -57,11 +56,9 @@ class TokenGenerator
 	}
 
 	/**
-	 *
-	 * Return a new token that doesn't have any ambiguous characters or offensive words
+	 * Return a new token that doesn't have any ambiguous characters or offensive words.
 	 *
 	 * @param int $characterLimit
-	 * @return string
 	 */
 	public static function generate($characterLimit = 4): string
 	{
@@ -76,21 +73,16 @@ class TokenGenerator
 		// repeat forever until a non-offensive code is found
 		do {
 			$code = Text::randomUnambiguous($characterLimit);
-			if (!self::isOffensive($code)) {
+			if (! self::isOffensive($code)) {
 				$foundCode = true;
 			}
-		} while (!$foundCode);
+		} while (! $foundCode);
 
 		return $code;
 	}
 
 	/**
-	 *
-	 * Find if a given word is offensive
-	 *
-	 * @param $word
-	 *
-	 * @return bool
+	 * Find if a given word is offensive.
 	 */
 	public static function isOffensive($word): bool
 	{
@@ -106,8 +98,7 @@ class TokenGenerator
 	}
 
 	/**
-	 *
-	 * Get a list of known offensive word stems
+	 * Get a list of known offensive word stems.
 	 *
 	 * @return string[]
 	 */

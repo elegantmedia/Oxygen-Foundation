@@ -1,7 +1,8 @@
 <?php
 
-return [
+declare(strict_types=1);
 
+return [
 	// static API KEY for the application
 	'api_key' => env('API_KEY', false),
 

@@ -1,7 +1,8 @@
 <?php
 
-return [
+declare(strict_types=1);
 
+return [
 	/*
 	|--------------------------------------------------------------------------
 	| Default Search Engine
@@ -102,5 +103,4 @@ return [
 		'id' => env('ALGOLIA_APP_ID', ''),
 		'secret' => env('ALGOLIA_SECRET', ''),
 	],
-
 ];

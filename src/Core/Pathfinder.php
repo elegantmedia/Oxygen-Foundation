@@ -1,9 +1,11 @@
 <?php
+
+declare(strict_types=1);
+
 namespace ElegantMedia\OxygenFoundation\Core;
 
 class Pathfinder
 {
-
 	public function dbAutoSeedersDir(): string
 	{
 		return database_path('seeders/OxygenExtensions/AutoSeed');

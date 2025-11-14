@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace ElegantMedia\OxygenFoundation\Extensions;
 
 use ElegantMedia\OxygenFoundation\Core\Pathfinder;
@@ -9,16 +12,14 @@ use Illuminate\Support\Facades\File;
 
 class ExtensionsSeeder extends \Illuminate\Database\Seeder
 {
-
 	/**
-	 * @param Pathfinder $pathfinder
 	 * @throws FileNotFoundException
 	 */
 	public function run(Pathfinder $pathfinder)
 	{
 		$autoSeedPath = $pathfinder->dbAutoSeedersDir();
 
-		if (!File::isDirectory($autoSeedPath)) {
+		if (! File::isDirectory($autoSeedPath)) {
 			return;
 		}
 

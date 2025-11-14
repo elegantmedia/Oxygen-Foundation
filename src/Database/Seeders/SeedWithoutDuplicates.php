@@ -1,5 +1,6 @@
 <?php
 
+declare(strict_types=1);
 
 namespace ElegantMedia\OxygenFoundation\Database\Seeders;
 
@@ -7,7 +8,6 @@ use Illuminate\Support\Str;
 
 trait SeedWithoutDuplicates
 {
-
 	protected function seedWithoutDuplicates(
 		array $entityDataList,
 		string $className,
@@ -31,8 +31,8 @@ trait SeedWithoutDuplicates
 			$entityModel = app($className);
 			$existingEntity = $entityModel->where($whereField, $whereValue)->first();
 
-			if (!$existingEntity) {
-				if (!is_array($entityData)) {
+			if (! $existingEntity) {
+				if (! is_array($entityData)) {
 					$entityData = [$nameField => $entityData];
 				}
 				$entityModel->create($entityData);

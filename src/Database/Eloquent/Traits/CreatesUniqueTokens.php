@@ -1,39 +1,63 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ElegantMedia\OxygenFoundation\Database\Eloquent\Traits;
 
 use ElegantMedia\OxygenFoundation\Exceptions\TokenGenerationException;
+use Illuminate\Support\Str;
 
 trait CreatesUniqueTokens
 {
-
 	/**
+	 * Create a cryptographically secure unique token for a given database field.
 	 *
-	 * Create a unique token for a given Database field.
-	 *
-	 * @param     $dbFieldName
-	 * @param int $length
-	 *
-	 * @return string
 	 * @throws TokenGenerationException
 	 */
-	public static function newUniqueToken($dbFieldName, $length = 35): string
+	public static function newUniqueToken(string $dbFieldName, int $length = 35): string
 	{
-		// take the timestamp and merge with a random string
-		// unlikely to cause a collision unless there's very high traffic
-		// repeat iMax times and fail
+		$maxAttempts = 10;
+		$attempts = 0;
 
-		$randomToken = null;
-		$iMax = 10;
+		while ($attempts < $maxAttempts) {
+			$token = Str::random($length);
 
-		for ($i = 0; $i < $iMax; $i++) {
-			$randomToken = time() . \Illuminate\Support\Str::random($length);
-			$existing = self::where($dbFieldName, $randomToken)->first();
-			if (!$existing) {
-				return $randomToken;
+			if (! static::where($dbFieldName, $token)->exists()) {
+				return $token;
 			}
+
+			$attempts++;
 		}
 
-		throw new TokenGenerationException("Failed to create a unique token. Failed after trying $iMax times.");
+		throw new TokenGenerationException(
+			"Failed to create a unique token for field '{$dbFieldName}' after {$maxAttempts} attempts."
+		);
+	}
+
+	/**
+	 * Create a cryptographically secure token with a high-resolution timestamp prefix.
+	 *
+	 * @throws TokenGenerationException
+	 */
+	public static function newTimestampedToken(string $dbFieldName, int $randomLength = 24): string
+	{
+		$maxAttempts = 10;
+		$attempts = 0;
+
+		while ($attempts < $maxAttempts) {
+			// Use monotonic high-resolution time to avoid float precision issues
+			$timestamp = base_convert((string) hrtime(true), 10, 36);
+			$token = $timestamp . '_' . Str::random($randomLength);
+
+			if (! static::where($dbFieldName, $token)->exists()) {
+				return $token;
+			}
+
+			$attempts++;
+		}
+
+		throw new TokenGenerationException(
+			"Failed to create a unique timestamped token for field '{$dbFieldName}' after {$maxAttempts} attempts."
+		);
 	}
 }

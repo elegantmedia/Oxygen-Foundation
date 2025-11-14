@@ -1,5 +1,6 @@
 <?php
 
+declare(strict_types=1);
 
 namespace ElegantMedia\OxygenFoundation\Http\Traits\Web;
 
@@ -11,10 +12,8 @@ use Illuminate\View\View;
 
 trait CanCreate
 {
-
 	/**
-	 *
-	 * Create a new record view
+	 * Create a new record view.
 	 *
 	 * @return Factory|View
 	 */
@@ -42,12 +41,7 @@ trait CanCreate
 	}
 
 	/**
-	 *
-	 * Handle store/POST method for the controller
-	 *
-	 * @param Request $request
-	 *
-	 * @return RedirectResponse
+	 * Handle store/POST method for the controller.
 	 */
 	public function store(Request $request): RedirectResponse
 	{

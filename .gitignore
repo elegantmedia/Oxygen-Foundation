@@ -1,8 +1,11 @@
 build
 composer.lock
 vendor
-phpcs.xml
-phpunit.xml
 .idea
 .phpunit.result.cache
 TODO.md
+*.cache
+.claude/
+.junie/
+.cursor/
+.phpunit.cache/

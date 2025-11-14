@@ -1,15 +1,48 @@
-; This file is for unifying the coding style for different editors and IDEs.
-; More information at https://editorconfig.org
+# EditorConfig is awesome: https://EditorConfig.org
 
+# top-most EditorConfig file
 root = true
 
+# Unix-style newlines with a newline ending every file
 [*]
 charset = utf-8
-indent_size = 4
-indent_style = tab
 end_of_line = lf
 insert_final_newline = true
 trim_trailing_whitespace = true
 
+# PHP files
+[*.php]
+indent_style = tab
+indent_size = 4
+
+# Test files
+# Note: Test methods can use snake_case (test_example) or camelCase (testExample)
+# This is configured in .php-cs-fixer.php, not .editorconfig
+[tests/**/*.php]
+indent_style = tab
+indent_size = 4
+
+# JSON, YAML, Markdown files
+[*.{json,yml,yaml,md}]
+indent_style = space
+indent_size = 2
+
+# Matches package.json and .json files
+[*.json]
+indent_style = space
+indent_size = 4
+
+# Blade templates
+[*.blade.php]
+indent_style = tab
+indent_size = 4
+
+# JavaScript, TypeScript, CSS, SCSS
+[*.{js,jsx,ts,tsx,css,scss}]
+indent_style = tab
+indent_size = 4
+
+# Markdown files
 [*.md]
 trim_trailing_whitespace = false
+EOF < /dev/null

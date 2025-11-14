@@ -1,8 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ElegantMedia\OxygenFoundation\Http\Traits\Web;
 
-use ElegantMedia\OxygenFoundation\Entitities\OxygenRepository;
+use ElegantMedia\OxygenFoundation\Entities\OxygenRepository;
 use ElegantMedia\PHPToolkit\Arr;
 use ElegantMedia\SimpleRepository\Search\Filterable;
 use Illuminate\Database\Eloquent\Model;
@@ -11,7 +13,6 @@ use Illuminate\Support\Str;
 
 trait FollowsConventions
 {
-
 	protected $resourceEntityName;
 
 	protected $viewsVendorName;
@@ -67,7 +68,6 @@ trait FollowsConventions
 		return Str::kebab($this->getResourceEntityName());
 	}
 
-
 	public function isDestroyAllowed(): bool
 	{
 		return $this->isDestroyAllowed;
@@ -75,7 +75,7 @@ trait FollowsConventions
 
 	protected function getModel()
 	{
-		if (!$this->repo) {
+		if (! $this->repo) {
 			throw new \InvalidArgumentException('Repository is not defined.');
 		}
 
@@ -99,8 +99,8 @@ trait FollowsConventions
 
 		$vendorName = $this->getViewsVendorName();
 
-		if (!empty($vendorName)) {
-			return $vendorName.'::'.$suffix;
+		if (! empty($vendorName)) {
+			return $vendorName . '::' . $suffix;
 		}
 
 		return $suffix;
@@ -118,7 +118,7 @@ trait FollowsConventions
 			$suffix,
 		]);
 
-		if (!\Illuminate\Support\Facades\Route::has($route)) {
+		if (! \Illuminate\Support\Facades\Route::has($route)) {
 			throw new \InvalidArgumentException(
 				"Route `$route` is not defined. Create this route or return a valid route from getIndexRouteName()"
 			);
@@ -133,7 +133,7 @@ trait FollowsConventions
 	{
 		// validations
 		if ($rules) {
-			$this->validate($request, $rules, $messages ?? []);
+			$request->validate($rules, $messages ?? []);
 		}
 
 		// save and return model
@@ -142,8 +142,6 @@ trait FollowsConventions
 
 	/**
 	 * @param bool $withDefaults
-	 *
-	 * @return Filterable
 	 */
 	protected function newSearchFilter($withDefaults = true): Filterable
 	{

@@ -1,5 +1,6 @@
 <?php
 
+declare(strict_types=1);
 
 namespace ElegantMedia\OxygenFoundation\Navigation;
 
@@ -7,7 +8,6 @@ use Illuminate\Support\Collection;
 
 class NavBar
 {
-
 	protected $name = Navigator::DEFAULT_NAME;
 
 	protected $items;
@@ -20,12 +20,7 @@ class NavBar
 	}
 
 	/**
-	 *
-	 * Add a new NavItem
-	 *
-	 * @param NavItem $item
-	 *
-	 * @return NavBar
+	 * Add a new NavItem.
 	 */
 	public function add(NavItem $item): NavBar
 	{
@@ -35,21 +30,17 @@ class NavBar
 	}
 
 	/**
-	 *
-	 * Get a list of menu items
-	 *
-	 * @return mixed
+	 * Get a list of menu items.
 	 */
-	public function items()
+	public function items(): Collection
 	{
 		$sorted = $this->items->sort(function ($first, $second) {
-
 			// ensure orders are numbers, just for safety
-			if (!is_int($first->getOrder())) {
+			if (! is_int($first->getOrder())) {
 				$first->setOrder(0);
 			}
 
-			if (!is_int($second->getOrder())) {
+			if (! is_int($second->getOrder())) {
 				$second->setOrder(0);
 			}
 
@@ -58,34 +49,27 @@ class NavBar
 				return strcmp(strtolower($first->getText()), strtolower($second->getText()));
 			}
 
-			// otherwise sort by order
-			return (int)($first->getOrder() > $second->getOrder());
+			// otherwise sort by numeric order (ascending)
+			return $first->getOrder() <=> $second->getOrder();
 		});
 
 		return $sorted;
 	}
 
-	public function getItem($itemId)
+	public function getItem($itemId): ?NavItem
 	{
 		return $this->items->first(function ($item) use ($itemId) {
 			return $item->getId() === $itemId;
 		});
 	}
 
-	/**
-	 * @param string $name
-	 *
-	 * @return NavBar
-	 */
 	public function setName(string $name): NavBar
 	{
 		$this->name = $name;
+
 		return $this;
 	}
 
-	/**
-	 * @return string
-	 */
 	public function getName(): string
 	{
 		return $this->name;

@@ -1,5 +1,6 @@
 <?php
 
+declare(strict_types=1);
 
 namespace ElegantMedia\OxygenFoundation\TestPackage\Http\Controllers;
 
@@ -9,7 +10,6 @@ use ElegantMedia\OxygenFoundation\TestPackage\Entities\Testers\TestersRepository
 
 class TestCRUDController extends ManageBaseController
 {
-
 	use CanCRUD;
 
 	public function __construct(TestersRepository $repo)

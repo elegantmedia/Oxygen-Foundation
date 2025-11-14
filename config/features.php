@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /*
 |--------------------------------------------------------------------------
 | Enable or disable application features from this file
@@ -15,7 +17,6 @@
 */
 
 return [
-
 	/*
 	|--------------------------------------------------------------------------
 	| AUTHENTICATION FEATURES
@@ -39,5 +40,4 @@ return [
 	],
 
 	'api_active' => env('API_ACTIVE', false),
-
 ];

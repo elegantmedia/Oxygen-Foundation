@@ -1,16 +1,15 @@
 <?php
 
+declare(strict_types=1);
 
 namespace ElegantMedia\OxygenFoundation\Tests\Feature;
 
 use App\Entities\Examples\Example;
-use Database\Seeders\OxygenExtensions\AutoSeed\ExamplesSeeder;
 use ElegantMedia\OxygenFoundation\Core\Pathfinder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class ExtensionAutoSeedersTest extends TestCase
 {
-
 	use RefreshDatabase;
 
 	/**
@@ -20,7 +19,7 @@ class ExtensionAutoSeedersTest extends TestCase
 	{
 		parent::setUp();
 
-		$this->loadMigrationsFrom(__DIR__.'/../laravel/database/migrations');
+		$this->loadMigrationsFrom(__DIR__ . '/../laravel/database/migrations');
 
 		$this->artisan('migrate', ['--database' => 'testing']);
 	}
@@ -28,9 +27,7 @@ class ExtensionAutoSeedersTest extends TestCase
 	/**
 	 * Define environment setup.
 	 *
-	 * @param  \Illuminate\Foundation\Application  $app
-	 *
-	 * @return void
+	 * @param \Illuminate\Foundation\Application $app
 	 */
 	protected function getEnvironmentSetUp($app)
 	{
@@ -38,9 +35,7 @@ class ExtensionAutoSeedersTest extends TestCase
 	}
 
 	/**
-	 *
-	 * Test if extension's auto-seeders are detected
-	 *
+	 * Test if extension's auto-seeders are detected.
 	 */
 	public function testExtensionAutoSeederRunsTests(): void
 	{
@@ -49,9 +44,9 @@ class ExtensionAutoSeedersTest extends TestCase
 		$testSeedersDir = __DIR__ . '/../laravel/database/seeders/OxygenExtensions/AutoSeed';
 
 		$this->mock(Pathfinder::class, function ($mock) use ($testSeedersDir) {
-			/** @var Mockery $mock */
+			/* @var Mockery $mock */
 			$mock->shouldReceive()->dbAutoSeedersDir()->once()
-				 ->andReturn($testSeedersDir);
+				->andReturn($testSeedersDir);
 		});
 
 		$beforeCount = Example::whereName('TestExample_001')->count();

@@ -1,5 +1,6 @@
 <?php
 
+declare(strict_types=1);
 
 namespace ElegantMedia\OxygenFoundation\Tests\Feature;
 
@@ -10,7 +11,6 @@ use ElegantMedia\OxygenFoundation\TestPackage\TestPackageServiceProvider;
 
 class TestCase extends \Orchestra\Testbench\TestCase
 {
-
 	protected $pathfinder;
 
 	public function __construct(string $name)
@@ -24,7 +24,7 @@ class TestCase extends \Orchestra\Testbench\TestCase
 	{
 		return [
 			OxygenFoundationServiceProvider::class,
-			TestPackageServiceProvider::class
+			TestPackageServiceProvider::class,
 		];
 	}
 

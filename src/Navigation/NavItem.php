@@ -1,22 +1,27 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ElegantMedia\OxygenFoundation\Navigation;
 
 use ElegantMedia\PHPToolkit\Types\HasAttributes;
+use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
 use Illuminate\Contracts\Support\Arrayable;
+use Illuminate\Support\Facades\Auth;
 
-/* @property id string Unique ID of the NavItem  */
-/* @property $text string Nav Item displayed text */
-/* @property $class string Get  */
-/* @property $icon_class string Icon class for the item  */
-/* @property $url string URL for the item  */
-/* @property $resource string  */
-/* @property $order int  */
-/* @property $hidden boolean Is hidden? */
-/* @property $permission string  */
+/**
+ * @property string $id         Unique ID of the NavItem
+ * @property string $text       Nav Item displayed text
+ * @property string $class      CSS class
+ * @property string $icon_class Icon class for the item
+ * @property string $url        URL for the item
+ * @property string $resource   Resource name
+ * @property int    $order      Sort order
+ * @property bool   $hidden     Is hidden?
+ * @property string $permission Required permission
+ */
 class NavItem implements Arrayable
 {
-
 	use HasAttributes;
 
 	public function __construct($attributes = null)
@@ -29,30 +34,23 @@ class NavItem implements Arrayable
 			$this->attributes = $attributes;
 		}
 
-		if (!isset($this->attributes['order'])) {
+		if (! isset($this->attributes['order'])) {
 			$this->order = 0;
 		}
 
-		if (!isset($this->attributes['hidden'])) {
+		if (! isset($this->attributes['hidden'])) {
 			$this->hidden = false;
 		}
 	}
 
-
-	/**
-	 * @return bool
-	 */
 	public function hasResource(): bool
 	{
-		return !empty($this->resource);
+		return ! empty($this->resource);
 	}
 
-	/**
-	 * @return bool
-	 */
 	public function hasValidResource(): bool
 	{
-		if (!$this->hasResource()) {
+		if (! $this->hasResource()) {
 			return false;
 		}
 
@@ -64,9 +62,6 @@ class NavItem implements Arrayable
 		return $this->isUserAllowedToSee();
 	}
 
-	/**
-	 * @return bool
-	 */
 	public function isUserAllowedToSee(): bool
 	{
 		if ($this->isHidden()) {
@@ -80,28 +75,22 @@ class NavItem implements Arrayable
 			return true;
 		}
 
-		$user = auth()->user();
+		$user = Auth::guard()->user();
 
-		if (!$user) {
+		if (! $user instanceof AuthorizableContract) {
 			return false;
 		}
 
 		return $user->can($permission);
 	}
 
-	/**
-	 * @return bool
-	 */
 	public function hasIcon(): bool
 	{
-		return !empty($this->icon_class);
+		return ! empty($this->icon_class);
 	}
-
 
 	/**
 	 * Get the instance as an array.
-	 *
-	 * @return array
 	 */
 	public function toArray(): array
 	{
@@ -125,8 +114,6 @@ class NavItem implements Arrayable
 
 	/**
 	 * @param mixed $text
-	 *
-	 * @return NavItem
 	 */
 	public function setText($text): self
 	{
@@ -137,8 +124,6 @@ class NavItem implements Arrayable
 
 	/**
 	 * @param mixed $url
-	 *
-	 * @return NavItem
 	 */
 	public function setUrl($url): self
 	{
@@ -149,8 +134,6 @@ class NavItem implements Arrayable
 
 	/**
 	 * @param mixed $resource
-	 *
-	 * @return NavItem
 	 */
 	public function setResource($resource): self
 	{
@@ -161,8 +144,6 @@ class NavItem implements Arrayable
 
 	/**
 	 * @param mixed $class
-	 *
-	 * @return NavItem
 	 */
 	public function setClass($class): self
 	{
@@ -172,9 +153,7 @@ class NavItem implements Arrayable
 	}
 
 	/**
-	 * @param mixed $order
-	 *
-	 * @return NavItem
+	 * @param int $order
 	 */
 	public function setOrder(int $order): self
 	{
@@ -184,8 +163,6 @@ class NavItem implements Arrayable
 	}
 
 	/**
-	 * @param string $class
-	 *
 	 * @return $this
 	 */
 	public function setIconClass(string $class): self
@@ -196,17 +173,17 @@ class NavItem implements Arrayable
 	}
 
 	/**
-	 * @return null|string
+	 * @return string|null
 	 */
-	public function getPermission()
+	public function getPermission(): ?string
 	{
 		return $this->permission;
 	}
 
 	/**
-	 * @param mixed $permission
+	 * @param string|null $permission
 	 */
-	public function setPermission($permission): self
+	public function setPermission(?string $permission): self
 	{
 		$this->permission = $permission;
 
@@ -214,7 +191,7 @@ class NavItem implements Arrayable
 	}
 
 	/**
-	 * @return mixed
+	 * @return int
 	 */
 	public function getOrder(): int
 	{
@@ -222,32 +199,32 @@ class NavItem implements Arrayable
 	}
 
 	/**
-	 * @return null|string
+	 * @return string|null
 	 */
-	public function getResource()
+	public function getResource(): ?string
 	{
 		return $this->resource;
 	}
 
 	/**
-	 * @return mixed
+	 * @return string
 	 */
 	public function getText(): string
 	{
 		return $this->attributes['text'];
 	}
 
-	public function hasUrl()
+	public function hasUrl(): bool
 	{
-		return !is_null($this->getUrl());
+		return ! is_null($this->getUrl());
 	}
 
 	/**
-	 * @return null|string
+	 * @return string|null
 	 */
-	public function getUrl()
+	public function getUrl(): ?string
 	{
-		if (!empty($this->attributes['url'])) {
+		if (! empty($this->attributes['url'])) {
 			return $this->attributes['url'];
 		}
 
@@ -258,7 +235,7 @@ class NavItem implements Arrayable
 		return null;
 	}
 
-	public function getId()
+	public function getId(): ?string
 	{
 		// return the unique ID for function
 		if ($this->id) {
@@ -269,21 +246,21 @@ class NavItem implements Arrayable
 	}
 
 	/**
-	 * @return null|string
+	 * @return string|null
 	 */
-	public function getClass()
+	public function getClass(): ?string
 	{
 		return $this->class;
 	}
 
-	public function setHidden($hidden = true)
+	public function setHidden($hidden = true): self
 	{
 		$this->hidden = $hidden;
 
 		return $this;
 	}
 
-	public function isHidden()
+	public function isHidden(): bool
 	{
 		return $this->hidden;
 	}

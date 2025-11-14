@@ -1,13 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ElegantMedia\OxygenFoundation\Console\Commands;
 
 use ElegantMedia\OxygenFoundation\Extensions\ExtensionsSeeder;
+use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Database\Seeder;
 
 class SeedCommand extends \Illuminate\Database\Console\Seeds\SeedCommand
 {
-
 	/**
 	 * The console command name.
 	 *
@@ -26,8 +28,10 @@ class SeedCommand extends \Illuminate\Database\Console\Seeds\SeedCommand
 	 * Get a seeder instance from the container.
 	 *
 	 * @return Seeder
+	 *
+	 * @throws BindingResolutionException
 	 */
-	protected function getSeeder()
+	protected function getSeeder(): Seeder
 	{
 		$class = ExtensionsSeeder::class;
 

@@ -1,5 +1,6 @@
 <?php
 
+declare(strict_types=1);
 
 namespace ElegantMedia\OxygenFoundation\Http\Traits\Web;
 
@@ -10,11 +11,9 @@ use Illuminate\View\View;
 
 trait CanRead
 {
-
 	/**
-	 * @param $id
-	 *
 	 * @return Factory|View
+	 *
 	 * @throws FileNotFoundException
 	 */
 	public function show($id)
@@ -31,10 +30,6 @@ trait CanRead
 		return view($viewName, $data);
 	}
 
-	/**
-	 * @param Model $model
-	 * @return string
-	 */
 	protected function getShowPageTitle(Model $model): string
 	{
 		return 'View ' . $this->getResourceSingularTitle();
@@ -42,6 +37,7 @@ trait CanRead
 
 	/**
 	 * @return mixed
+	 *
 	 * @throws FileNotFoundException
 	 */
 	protected function getShowViewName()

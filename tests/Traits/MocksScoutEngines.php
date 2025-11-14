@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Tests\Traits;
 
 use ElegantMedia\OxygenFoundation\Scout\KeywordSearchEngine;
@@ -9,7 +11,6 @@ use Mockery\MockInterface;
 
 trait MocksScoutEngines
 {
-
 	use InteractsWithContainer;
 
 	protected function mockScoutKeywordEngine(): MockInterface

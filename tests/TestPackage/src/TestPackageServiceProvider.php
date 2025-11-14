@@ -1,14 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace ElegantMedia\OxygenFoundation\TestPackage;
 
-use ElegantMedia\OxygenFoundation\Extensions\ExtensionServiceProviderInterface;
 use ElegantMedia\OxygenFoundation\TestPackage\Console\TestExtensionInstallCommand;
 use Illuminate\Support\ServiceProvider;
 
 class TestPackageServiceProvider extends ServiceProvider
 {
-
 	public function boot(): void
 	{
 		// auto-publishing files

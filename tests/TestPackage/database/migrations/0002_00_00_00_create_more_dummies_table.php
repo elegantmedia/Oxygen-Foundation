@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 
@@ -7,8 +9,6 @@ class CreateMoreDummiesTable extends Migration
 {
 	/**
 	 * Run the database.
-	 *
-	 * @return void
 	 */
 	public function up()
 	{
@@ -20,11 +20,8 @@ class CreateMoreDummiesTable extends Migration
 		});
 	}
 
-
 	/**
 	 * Reverse the database.
-	 *
-	 * @return void
 	 */
 	public function down()
 	{

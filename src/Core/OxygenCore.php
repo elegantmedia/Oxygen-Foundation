@@ -1,10 +1,12 @@
 <?php
+
+declare(strict_types=1);
+
 namespace ElegantMedia\OxygenFoundation\Core;
 
 class OxygenCore
 {
-
-	public static function getUserClass()
+	public static function getUserClass(): ?string
 	{
 		$config = app()->make('config');
 
@@ -19,7 +21,7 @@ class OxygenCore
 		return $config->get("auth.providers.{$provider}.model");
 	}
 
-	public static function makeUserModel()
+	public static function makeUserModel(): mixed
 	{
 		return app()->make(self::getUserClass());
 	}

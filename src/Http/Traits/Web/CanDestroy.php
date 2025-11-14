@@ -1,5 +1,6 @@
 <?php
 
+declare(strict_types=1);
 
 namespace ElegantMedia\OxygenFoundation\Http\Traits\Web;
 
@@ -7,14 +8,8 @@ use Illuminate\Http\RedirectResponse;
 
 trait CanDestroy
 {
-
 	/**
-	 *
-	 * Handle destroy/DELETE method for the controller
-	 *
-	 * @param $id
-	 *
-	 * @return RedirectResponse
+	 * Handle destroy/DELETE method for the controller.
 	 */
 	public function destroy($id): ?RedirectResponse
 	{
@@ -27,6 +22,6 @@ trait CanDestroy
 			return redirect()->route($this->getIndexRouteName())->with('success', 'Record deleted.');
 		}
 
-		abort(401, 'You are not authorized to access this URL');
+		abort(403, 'You are not authorized to access this URL');
 	}
 }

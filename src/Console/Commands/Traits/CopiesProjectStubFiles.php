@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace ElegantMedia\OxygenFoundation\Console\Commands\Traits;
 
 use ElegantMedia\OxygenFoundation\Core\Pathfinder;
@@ -12,22 +15,18 @@ use Symfony\Component\HttpFoundation\File\Exception\FileException;
 
 trait CopiesProjectStubFiles
 {
-
-
 	/**
-	 * @param $stubPath
-	 * @return string
 	 * @throws ClassAlreadyExistsException
 	 * @throws FileInvalidException
 	 * @throws FileNotFoundException
 	 */
-	protected function copyMigrationFile($stubPath): string
+	protected function copyMigrationFile(string $stubPath): string
 	{
 		// because Laravel 5.7 doesn't auto-load migration classes, manually load them
 		// $migrationsPath = database_path('database');
 		// Loader::includeAllFilesFromDir($migrationsPath);
 
-		if (!file_exists($stubPath)) {
+		if (! file_exists($stubPath)) {
 			throw new FileNotFoundException("Filing {$stubPath} not found.");
 		}
 
@@ -45,15 +44,16 @@ trait CopiesProjectStubFiles
 		//
 		// From above examples, we have to caputure `create_dummies_table.php` using regex
 
-		preg_match('/[\d]{1,4}_?(?:\d{1,4}_)+(.*)/', $basename, $matches);
-		if (!is_countable($matches) || count($matches) < 1) {
+		$matchCount = preg_match('/[\d]{1,4}_?(?:\d{1,4}_)+(.*)/', $basename, $matches);
+		if ($matchCount !== 1) {
 			throw new FileInvalidException("Unable to parse migration filename `{$basename}` at `{$stubPath}`.");
 		}
-		$filename = Timing::microTimestamp() . '_' . $matches[1];
+		[, $filenameSuffix] = $matches;
+		$filename = Timing::microTimestamp() . '_' . $filenameSuffix;
 
 		$destinationDir = app(Pathfinder::class)->dbMigrationsDir();
 		File::ensureDirectoryExists($destinationDir);
-		$destinationPath = $destinationDir.DIRECTORY_SEPARATOR.$filename;
+		$destinationPath = $destinationDir . DIRECTORY_SEPARATOR . $filename;
 
 		$this->copyFile($stubPath, $destinationPath, $className);
 
@@ -61,14 +61,12 @@ trait CopiesProjectStubFiles
 	}
 
 	/**
-	 * @param $stubPath
-	 * @return string
 	 * @throws ClassAlreadyExistsException
 	 * @throws FileNotFoundException
 	 */
-	protected function copySeedFile($stubPath): string
+	protected function copySeedFile(string $stubPath): string
 	{
-		if (!file_exists($stubPath)) {
+		if (! file_exists($stubPath)) {
 			throw new FileNotFoundException("File {$stubPath} not found.");
 		}
 
@@ -81,21 +79,19 @@ trait CopiesProjectStubFiles
 		$filename = pathinfo($stubPath, PATHINFO_BASENAME);
 		$destinationDir = database_path('seeders');
 		File::ensureDirectoryExists($destinationDir);
-		$destinationPath = $destinationDir.DIRECTORY_SEPARATOR.$filename;
+		$destinationPath = $destinationDir . DIRECTORY_SEPARATOR . $filename;
 
-		$result = $this->copyFile($stubPath, $destinationPath, $className);
+		$this->copyFile($stubPath, $destinationPath, $className);
 
 		return $destinationPath;
 	}
 
 	/**
-	 * @param $source
-	 * @param $destination
-	 * @param null $className
-	 * @return bool
+	 * @param string|null $className
+	 *
 	 * @throws ClassAlreadyExistsException
 	 */
-	protected function copyFile($source, $destination, $className = null): bool
+	protected function copyFile(string $source, string $destination, ?string $className = null): bool
 	{
 		if ($className && class_exists($className, false)) {
 			// $this->warn("{$className} class already exists. Skipped...");
@@ -103,9 +99,10 @@ trait CopiesProjectStubFiles
 			throw new ClassAlreadyExistsException("{$className} class already exists");
 		}
 
-		if (!File::copy($source, $destination)) {
+		if (! File::copy($source, $destination)) {
 			throw new FileException("Unable to copy the file {$destination}");
 		}
+
 		return true;
 	}
 }

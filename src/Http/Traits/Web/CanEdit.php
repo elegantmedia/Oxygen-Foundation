@@ -1,5 +1,6 @@
 <?php
 
+declare(strict_types=1);
 
 namespace ElegantMedia\OxygenFoundation\Http\Traits\Web;
 
@@ -12,14 +13,11 @@ use Illuminate\View\View;
 
 trait CanEdit
 {
-
 	/**
-	 *
-	 * Edit the resource
-	 *
-	 * @param $id
+	 * Edit the resource.
 	 *
 	 * @return Factory|View
+	 *
 	 * @throws FileNotFoundException
 	 */
 	public function edit($id)
@@ -48,13 +46,7 @@ trait CanEdit
 	}
 
 	/**
-	 *
-	 * Handle update/PUT request for the controller
-	 *
-	 * @param Request $request
-	 * @param         $id
-	 *
-	 * @return RedirectResponse
+	 * Handle update/PUT request for the controller.
 	 */
 	public function update(Request $request, $id): RedirectResponse
 	{
@@ -73,10 +65,6 @@ trait CanEdit
 		return redirect()->route($this->getRouteToRedirectToAfterUpdate());
 	}
 
-	/**
-	 * @param Model $model
-	 * @return string
-	 */
 	protected function getEditPageTitle(Model $model): string
 	{
 		return 'Edit ' . $this->getResourceSingularTitle();
