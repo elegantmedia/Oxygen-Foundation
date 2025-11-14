@@ -13,9 +13,13 @@ use ElegantMedia\PHPToolkit\FileEditor;
 use ElegantMedia\PHPToolkit\Loader;
 use ElegantMedia\PHPToolkit\Reflector;
 use Illuminate\Console\Command;
+use Illuminate\Console\OutputStyle;
 use Illuminate\Support\Composer;
 use Illuminate\Support\Facades\File;
 use ReflectionException;
+use Symfony\Component\Console\Input\ArrayInput;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Output\NullOutput;
 use Symfony\Component\Finder\Exception\DirectoryNotFoundException;
 use Symfony\Component\Process\Process;
 
@@ -34,6 +38,15 @@ abstract class ExtensionInstallCommand extends Command implements ExtensionSetup
 	protected $requiredNpmPackages = [];
 
 	protected $requiredNpmDevPackages = [];
+
+    public function __construct()
+    {
+        parent::__construct();
+
+        // Seed IO so this command works when instantiated outside Artisan
+        $this->setInput(new ArrayInput([]));
+        $this->setOutput(new OutputStyle($this->input, new NullOutput()));
+    }
 
 	/**
 	 * @throws ClassAlreadyExistsException
