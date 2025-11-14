@@ -83,30 +83,55 @@ trait RegisterSchemaMacros
 	 */
 	protected function registerFileMacro(): void
 	{
-		Blueprint::macro('file', function ($prefix = '') {
-			/* @var Blueprint $this */
-			$this->string($this->prefix($prefix, 'uuid'))->unique()->nullable();
-			$this->string($this->prefix($prefix, 'name'))->nullable();
-			$this->boolean($this->prefix($prefix, 'allow_public_access'))->default(false);
-			$this->string($this->prefix($prefix, 'original_filename'))->nullable();
-			$this->string($this->prefix($prefix, 'file_path'))->nullable();
-			$this->string($this->prefix($prefix, 'file_disk'))->nullable();
-			$this->string($this->prefix($prefix, 'file_url'))->nullable();
-			$this->bigInteger($this->prefix($prefix, 'file_size_bytes'))->unsigned()->nullable();
-			$this->integer($this->prefix($prefix, 'uploaded_by_user_id'))->nullable()->references('id')->on('users');
-		});
+        Blueprint::macro('file', function ($prefix = '') {
+            /* @var Blueprint $this */
+            $this->string($this->prefix($prefix, 'uuid'))->unique()->nullable();
+            $this->string($this->prefix($prefix, 'name'))->nullable();
+            $this->boolean($this->prefix($prefix, 'allow_public_access'))->default(false);
+            $this->string($this->prefix($prefix, 'original_filename'))->nullable();
+            $this->string($this->prefix($prefix, 'file_path'))->nullable();
+            $this->string($this->prefix($prefix, 'file_disk'))->nullable();
+            $this->string($this->prefix($prefix, 'file_url'))->nullable();
+            $this->bigInteger($this->prefix($prefix, 'file_size_bytes'))->unsigned()->nullable();
+            // Modern foreign key syntax with proper index and constraint
+            $this->foreignId($this->prefix($prefix, 'uploaded_by_user_id'))
+                ->nullable()
+                ->constrained('users')
+                ->nullOnDelete();
+        });
 
-		Blueprint::macro('dropFile', function ($prefix = '') {
-			/* @var Blueprint $this */
-			$this->dropColumn($this->prefix($prefix, 'uuid'));
-			$this->dropColumn($this->prefix($prefix, 'name'));
-			$this->dropColumn($this->prefix($prefix, 'allow_public_access'));
-			$this->dropColumn($this->prefix($prefix, 'original_filename'));
-			$this->dropColumn($this->prefix($prefix, 'file_path'));
-			$this->dropColumn($this->prefix($prefix, 'file_disk'));
-			$this->dropColumn($this->prefix($prefix, 'file_url'));
-			$this->dropColumn($this->prefix($prefix, 'file_size_bytes'));
-			$this->dropColumn($this->prefix($prefix, 'uploaded_by_user_id'));
-		});
+        Blueprint::macro('dropFile', function ($prefix = '') {
+            /* @var Blueprint $this */
+            // Drop unique index on uuid before dropping the column for better SQLite compatibility
+            try {
+                $this->dropUnique([$this->prefix($prefix, 'uuid')]);
+            } catch (\Throwable $e) {
+                // Ignore if index doesn't exist or driver can't drop it explicitly; Laravel may rebuild the table
+            }
+            // Drop FK before dropping the FK column
+            $fkColumn = $this->prefix($prefix, 'uploaded_by_user_id');
+            try {
+                if (method_exists($this, 'dropConstrainedForeignId')) {
+                    $this->dropConstrainedForeignId($fkColumn);
+                } else {
+                    $this->dropForeign([$fkColumn]);
+                    $this->dropColumn($fkColumn);
+                }
+            } catch (\Throwable $e) {
+                // Fallback: attempt to drop the column directly
+                try {
+                    $this->dropColumn($fkColumn);
+                } catch (\Throwable $ignored) {
+                }
+            }
+            $this->dropColumn($this->prefix($prefix, 'uuid'));
+            $this->dropColumn($this->prefix($prefix, 'name'));
+            $this->dropColumn($this->prefix($prefix, 'allow_public_access'));
+            $this->dropColumn($this->prefix($prefix, 'original_filename'));
+            $this->dropColumn($this->prefix($prefix, 'file_path'));
+            $this->dropColumn($this->prefix($prefix, 'file_disk'));
+            $this->dropColumn($this->prefix($prefix, 'file_url'));
+            $this->dropColumn($this->prefix($prefix, 'file_size_bytes'));
+        });
 	}
 }
