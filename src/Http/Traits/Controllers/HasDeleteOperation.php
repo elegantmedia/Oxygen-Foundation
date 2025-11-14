@@ -23,6 +23,6 @@ trait HasDeleteOperation
 			return redirect()->route($this->getIndexRouteName())->with('success', 'Record deleted.');
 		}
 
-		abort(401, 'You are not authorized to access this URL');
+		abort(403, 'You are not authorized to access this URL');
 	}
 }
