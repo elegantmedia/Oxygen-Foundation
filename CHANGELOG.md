@@ -21,6 +21,7 @@ Use versions as below.
 - Fixed namespace import in FollowsConventions trait
 - Fixed validation in controller traits to use Request::validate for Laravel 12 compatibility
  - Secured legacy CreatesUniqueTokens logic and added high-resolution timestamp tokens; improved HasSecureToken timestamp precision
+ - Completed HasUuid contract: trait now provides getUuidColumn() and findByUuid()
 
 ## v3.0.0
 - Illuminate 10 Support

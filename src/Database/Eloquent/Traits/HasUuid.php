@@ -38,6 +38,14 @@ trait HasUuid
 	}
 
 	/**
+	 * Get the UUID column name.
+	 */
+	public function getUuidColumn(): string
+	{
+		return 'uuid';
+	}
+
+	/**
 	 * Retrieve the model for a bound value.
 	 */
 	public function resolveRouteBinding($value, $field = null): ?Model
@@ -51,5 +59,13 @@ trait HasUuid
 	public function scopeWhereUuid($query, string $uuid)
 	{
 		return $query->where('uuid', $uuid);
+	}
+
+	/**
+	 * Find a model by its UUID.
+	 */
+	public static function findByUuid(string $uuid): ?self
+	{
+		return static::where('uuid', $uuid)->first();
 	}
 }
