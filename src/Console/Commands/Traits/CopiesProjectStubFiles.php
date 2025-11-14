@@ -20,7 +20,7 @@ trait CopiesProjectStubFiles
 	 * @throws FileInvalidException
 	 * @throws FileNotFoundException
 	 */
-	protected function copyMigrationFile($stubPath): string
+	protected function copyMigrationFile(string $stubPath): string
 	{
 		// because Laravel 5.7 doesn't auto-load migration classes, manually load them
 		// $migrationsPath = database_path('database');
@@ -45,10 +45,11 @@ trait CopiesProjectStubFiles
 		// From above examples, we have to caputure `create_dummies_table.php` using regex
 
 		$matchCount = preg_match('/[\d]{1,4}_?(?:\d{1,4}_)+(.*)/', $basename, $matches);
-		if ($matchCount !== 1 || ! isset($matches[1])) {
+		if ($matchCount !== 1) {
 			throw new FileInvalidException("Unable to parse migration filename `{$basename}` at `{$stubPath}`.");
 		}
-		$filename = Timing::microTimestamp() . '_' . $matches[1];
+		[, $filenameSuffix] = $matches;
+		$filename = Timing::microTimestamp() . '_' . $filenameSuffix;
 
 		$destinationDir = app(Pathfinder::class)->dbMigrationsDir();
 		File::ensureDirectoryExists($destinationDir);
@@ -63,7 +64,7 @@ trait CopiesProjectStubFiles
 	 * @throws ClassAlreadyExistsException
 	 * @throws FileNotFoundException
 	 */
-	protected function copySeedFile($stubPath): string
+	protected function copySeedFile(string $stubPath): string
 	{
 		if (! file_exists($stubPath)) {
 			throw new FileNotFoundException("File {$stubPath} not found.");
@@ -80,17 +81,17 @@ trait CopiesProjectStubFiles
 		File::ensureDirectoryExists($destinationDir);
 		$destinationPath = $destinationDir . DIRECTORY_SEPARATOR . $filename;
 
-		$result = $this->copyFile($stubPath, $destinationPath, $className);
+		$this->copyFile($stubPath, $destinationPath, $className);
 
 		return $destinationPath;
 	}
 
 	/**
-	 * @param null $className
+	 * @param string|null $className
 	 *
 	 * @throws ClassAlreadyExistsException
 	 */
-	protected function copyFile($source, $destination, $className = null): bool
+	protected function copyFile(string $source, string $destination, ?string $className = null): bool
 	{
 		if ($className && class_exists($className, false)) {
 			// $this->warn("{$className} class already exists. Skipped...");

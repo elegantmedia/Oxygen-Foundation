@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace ElegantMedia\OxygenFoundation\Navigation;
 
 use ElegantMedia\PHPToolkit\Types\HasAttributes;
+use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
 use Illuminate\Contracts\Support\Arrayable;
+use Illuminate\Support\Facades\Auth;
 
 /**
  * @property string $id         Unique ID of the NavItem
@@ -73,9 +75,9 @@ class NavItem implements Arrayable
 			return true;
 		}
 
-		$user = auth()->user();
+		$user = Auth::guard()->user();
 
-		if (! $user) {
+		if (! $user instanceof AuthorizableContract) {
 			return false;
 		}
 
@@ -151,7 +153,7 @@ class NavItem implements Arrayable
 	}
 
 	/**
-	 * @param mixed $order
+	 * @param int $order
 	 */
 	public function setOrder(int $order): self
 	{
@@ -179,9 +181,9 @@ class NavItem implements Arrayable
 	}
 
 	/**
-	 * @param mixed $permission
+	 * @param string|null $permission
 	 */
-	public function setPermission($permission): self
+	public function setPermission(?string $permission): self
 	{
 		$this->permission = $permission;
 
@@ -189,7 +191,7 @@ class NavItem implements Arrayable
 	}
 
 	/**
-	 * @return mixed
+	 * @return int
 	 */
 	public function getOrder(): int
 	{
@@ -205,7 +207,7 @@ class NavItem implements Arrayable
 	}
 
 	/**
-	 * @return mixed
+	 * @return string
 	 */
 	public function getText(): string
 	{

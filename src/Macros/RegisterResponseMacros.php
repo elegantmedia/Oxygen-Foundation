@@ -6,7 +6,9 @@ namespace ElegantMedia\OxygenFoundation\Macros;
 
 use ElegantMedia\OxygenFoundation\Http\Response as BaseResponse;
 use Illuminate\Contracts\Pagination\Paginator;
+use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Support\Facades\Response;
+use InvalidArgumentException;
 
 trait RegisterResponseMacros
 {
@@ -34,6 +36,10 @@ trait RegisterResponseMacros
 		});
 
 		Response::macro('apiSuccessPaginated', function (Paginator $paginator, $message = '', $customData = []) {
+			if (! $paginator instanceof Arrayable) {
+				throw new InvalidArgumentException('Paginator instance must implement Arrayable.');
+			}
+
 			$paginatorArray = $paginator->toArray();
 			if (isset($paginatorArray['data'])) {
 				unset($paginatorArray['data']);

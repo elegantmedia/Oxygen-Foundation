@@ -13,18 +13,15 @@ class OxygenRepository extends SimpleBaseRepository
 {
 	/**
 	 * Fill model data from a request.
-	 *
-	 * @param null $id
+	 * @param int|string|null $id
 	 */
-	public function fillModelFromRequest(Request $request, $id = null): Model
+	public function fillModelFromRequest(Request $request, int|string|null $id = null): Model
 	{
-		if (! $id) {
-			$entity = $this->newModel();
-		} else {
-			$entity = $this->find($id);
-		}
+		$entity = $id === null
+			? $this->newModel()
+			: $this->find($id);
 
-		if (! $entity) {
+		if (! $entity instanceof Model) {
 			throw new ModelNotFoundException();
 		}
 

@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+use Carbon\CarbonInterface;
+
 // Global functions with oxygen package
 
 if (! function_exists('has_feature')) {
@@ -9,7 +11,7 @@ if (! function_exists('has_feature')) {
 	 * Check if a given feature is enabled in the application
 	 * To edit features, see `config/features.php`.
 	 *
-	 * @return Illuminate\Config\Repository|mixed
+	 * @return bool
 	 */
 	function has_feature($featureSlug): bool
 	{
@@ -25,60 +27,42 @@ if (! function_exists('has_feature')) {
 if (! function_exists('standard_datetime')) {
 	/**
 	 * Convert a date to EM's standard date time format.
-	 *
-	 * @param null $dateTime
-	 *
-	 * @return string|null
 	 */
-	function standard_datetime($dateTime = null)
+	function standard_datetime(?CarbonInterface $dateTime = null): ?string
 	{
-		if (empty($dateTime)) {
+		if ($dateTime === null) {
 			return null;
 		}
 
-		if ($dateTime instanceof Carbon\Carbon) {
-			return $dateTime->format(config('oxygen.date_time_format'));
-		}
+		return $dateTime->format(config('oxygen.date_time_format'));
 	}
 }
 
 if (! function_exists('standard_date')) {
 	/**
 	 * Convert a date to standard date format.
-	 *
-	 * @param null $dateTime
-	 *
-	 * @return string|null
 	 */
-	function standard_date($dateTime = null)
+	function standard_date(?CarbonInterface $dateTime = null): ?string
 	{
-		if (empty($dateTime)) {
+		if ($dateTime === null) {
 			return null;
 		}
 
-		if ($dateTime instanceof Carbon\Carbon) {
-			return $dateTime->format(config('oxygen.date_format'));
-		}
+		return $dateTime->format(config('oxygen.date_format'));
 	}
 }
 
 if (! function_exists('standard_time')) {
 	/**
 	 * Convert a date to EM's standard time format.
-	 *
-	 * @param null $dateTime
-	 *
-	 * @return string|null
 	 */
-	function standard_time($dateTime = null)
+	function standard_time(?CarbonInterface $dateTime = null): ?string
 	{
-		if (empty($dateTime)) {
+		if ($dateTime === null) {
 			return null;
 		}
 
-		if ($dateTime instanceof Carbon\Carbon) {
-			return $dateTime->format(config('oxygen.time_format'));
-		}
+		return $dateTime->format(config('oxygen.time_format'));
 	}
 }
 

@@ -8,7 +8,7 @@ use Illuminate\Support\Collection;
 
 class Navigator
 {
-	protected $navBars;
+	protected Collection $navBars;
 
 	public const DEFAULT_NAME = 'default';
 
@@ -19,10 +19,8 @@ class Navigator
 
 	/**
 	 * Get the current instance.
-	 *
-	 * @return $this
 	 */
-	public function get(): Navigator
+	public function get(): self
 	{
 		return $this;
 	}
@@ -30,7 +28,7 @@ class Navigator
 	/**
 	 * Create and return a new NavBar.
 	 */
-	public function newNavBar($navBarName): NavBar
+	public function newNavBar(string $navBarName): NavBar
 	{
 		$navBar = new NavBar($navBarName);
 
@@ -43,10 +41,8 @@ class Navigator
 	 * Find an existing NavBar.
 	 *
 	 * @param string $navBarName
-	 *
-	 * @return mixed
 	 */
-	public function getNavBar($navBarName = self::DEFAULT_NAME): NavBar
+	public function getNavBar(string $navBarName = self::DEFAULT_NAME): NavBar
 	{
 		$navBar = $this->navBars->first(function ($navBar) use ($navBarName) {
 			return $navBar->getName() === $navBarName;
@@ -64,16 +60,10 @@ class Navigator
 	 *
 	 * @param array|NavItem $item
 	 * @param string        $parentName
-	 *
-	 * @return $this
 	 */
-	public function addItem($item, $parentName = self::DEFAULT_NAME): self
+	public function addItem(array|NavItem $item, string $parentName = self::DEFAULT_NAME): self
 	{
 		$navBar = $this->getNavBar($parentName);
-
-		if (! $navBar) {
-			$navBar = $this->newNavBar($parentName);
-		}
 
 		if (is_array($item)) {
 			$item = new NavItem($item);
@@ -86,10 +76,8 @@ class Navigator
 
 	/**
 	 * Mark a menu item as hidden, so they won't appear.
-	 *
-	 * @param string $navBarName
 	 */
-	public function hideItem($itemId, $navBarName = self::DEFAULT_NAME): void
+	public function hideItem(string $itemId, string $navBarName = self::DEFAULT_NAME): void
 	{
 		$navBar = $this->getNavBar($navBarName);
 
@@ -104,10 +92,8 @@ class Navigator
 	 * Get list of items for a Requested NavBar.
 	 *
 	 * @param string $navBarName
-	 *
-	 * @return mixed
 	 */
-	public function items($navBarName = self::DEFAULT_NAME): Collection
+	public function items(string $navBarName = self::DEFAULT_NAME): Collection
 	{
 		return $this->getNavBar($navBarName)->items();
 	}

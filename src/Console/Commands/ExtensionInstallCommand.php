@@ -220,7 +220,7 @@ abstract class ExtensionInstallCommand extends Command implements ExtensionSetup
 		$process->setTimeout(null);
 
 		$exitCode = $process->run(function ($type, $output) {
-			$this->output?->write($output);
+			$this->output->write($output);
 		});
 
 		if ($exitCode !== 0) {

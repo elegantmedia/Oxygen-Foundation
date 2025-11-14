@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace ElegantMedia\OxygenFoundation\Macros;
 
+use ElegantMedia\OxygenFoundation\Macros\Contracts\BlueprintMacroMethods;
 use ElegantMedia\PHPToolkit\Arr;
 use Illuminate\Database\Schema\Blueprint;
 
@@ -27,13 +28,14 @@ trait RegisterSchemaMacros
 	{
 		// create location fields
 		Blueprint::macro('location', function ($prefix = '') {
-			/* @var Blueprint $this */
-			$this->float($this->prefix($prefix, 'latitude'), 10, 6)->nullable()->index();
-			$this->float($this->prefix($prefix, 'longitude'), 10, 6)->nullable()->index();
+			/** @var Blueprint&BlueprintMacroMethods $this */
+			$this->decimal($this->prefix($prefix, 'latitude'), 10, 6)->nullable()->index();
+			$this->decimal($this->prefix($prefix, 'longitude'), 10, 6)->nullable()->index();
 		});
 
 		// drop location fields
 		Blueprint::macro('dropLocation', function ($prefix = '') {
+			/** @var Blueprint&BlueprintMacroMethods $this */
 			$this->dropColumn($this->prefix($prefix, 'latitude'));
 			$this->dropColumn($this->prefix($prefix, 'longitude'));
 		});
@@ -46,7 +48,7 @@ trait RegisterSchemaMacros
 	{
 		// create place fields
 		Blueprint::macro('place', function ($prefix = '') {
-			/* @var Blueprint $this */
+			/** @var Blueprint&BlueprintMacroMethods $this */
 			$this->string($this->prefix($prefix, 'venue'))->nullable();
 			$this->string($this->prefix($prefix, 'address'))->nullable();
 			$this->string($this->prefix($prefix, 'formatted_address'))->nullable();
@@ -63,6 +65,7 @@ trait RegisterSchemaMacros
 
 		// drop place fields
 		Blueprint::macro('dropPlace', function ($prefix = '') {
+			/** @var Blueprint&BlueprintMacroMethods $this */
 			$this->dropColumn($this->prefix($prefix, 'venue'));
 			$this->dropColumn($this->prefix($prefix, 'address'));
 			$this->dropColumn($this->prefix($prefix, 'formatted_address'));
@@ -84,7 +87,7 @@ trait RegisterSchemaMacros
 	protected function registerFileMacro(): void
 	{
 		Blueprint::macro('file', function ($prefix = '') {
-			/* @var Blueprint $this */
+			/** @var Blueprint&BlueprintMacroMethods $this */
 			$this->string($this->prefix($prefix, 'uuid'))->unique()->nullable();
 			$this->string($this->prefix($prefix, 'name'))->nullable();
 			$this->boolean($this->prefix($prefix, 'allow_public_access'))->default(false);
@@ -101,7 +104,7 @@ trait RegisterSchemaMacros
 		});
 
 		Blueprint::macro('dropFile', function ($prefix = '') {
-			/* @var Blueprint $this */
+			/** @var Blueprint&BlueprintMacroMethods $this */
 			// Drop unique index on uuid before dropping the column for better SQLite compatibility
 			try {
 				$this->dropUnique([$this->prefix($prefix, 'uuid')]);
@@ -112,19 +115,19 @@ trait RegisterSchemaMacros
 			$fkColumn = $this->prefix($prefix, 'uploaded_by_user_id');
 
 			try {
-				if (method_exists($this, 'dropConstrainedForeignId')) {
-					$this->dropConstrainedForeignId($fkColumn);
-				} else {
-					$this->dropForeign([$fkColumn]);
-					$this->dropColumn($fkColumn);
-				}
+				$this->dropConstrainedForeignId($fkColumn);
 			} catch (\Throwable $e) {
-				// Fallback: attempt to drop the column directly
+				try {
+					$this->dropForeign([$fkColumn]);
+				} catch (\Throwable $ignored) {
+				}
+
 				try {
 					$this->dropColumn($fkColumn);
 				} catch (\Throwable $ignored) {
 				}
 			}
+
 			$this->dropColumn($this->prefix($prefix, 'uuid'));
 			$this->dropColumn($this->prefix($prefix, 'name'));
 			$this->dropColumn($this->prefix($prefix, 'allow_public_access'));
