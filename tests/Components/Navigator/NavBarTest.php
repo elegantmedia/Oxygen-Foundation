@@ -69,4 +69,50 @@ class NavBarTest extends TestCase
 		$this->assertEquals($first->getText(), $navBar->items()->slice(2, 1)->first()->getText());
 		$this->assertEquals($second->getText(), $navBar->items()->slice(3, 1)->first()->getText());
 	}
+
+	/**
+	 * Sorting handles negatives, duplicates, and ties by text.
+	 */
+	public function testNavBarSortingHandlesNegativeAndDuplicates(): void
+	{
+		$neg = new NavItem();
+		$neg->setOrder(-5)->setText('z_neg');
+
+		$zeroB = new NavItem();
+		$zeroB->setOrder(0)->setText('b_zero');
+
+		$zeroA = new NavItem();
+		$zeroA->setOrder(0)->setText('a_zero');
+
+		$oneB = new NavItem();
+		$oneB->setOrder(1)->setText('beta');
+
+		$oneA = new NavItem();
+		$oneA->setOrder(1)->setText('alpha');
+
+		$high = new NavItem();
+		$high->setOrder(10)->setText('x_high');
+
+		// Add in unsorted order
+		Navigator::addItem($oneB);
+		Navigator::addItem($zeroB);
+		Navigator::addItem($high);
+		Navigator::addItem($neg);
+		Navigator::addItem($oneA);
+		Navigator::addItem($zeroA);
+
+		$navBar = Navigator::getNavBar();
+		$sorted = $navBar->items()->values();
+
+		$expected = [
+			'z_neg',   // -5
+			'a_zero',  // 0 (tie by text)
+			'b_zero',  // 0
+			'alpha',   // 1 (tie by text)
+			'beta',    // 1
+			'x_high',  // 10
+		];
+
+		$this->assertSame($expected, $sorted->pluck('text')->all());
+	}
 }

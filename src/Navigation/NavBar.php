@@ -51,8 +51,8 @@ class NavBar
 				return strcmp(strtolower($first->getText()), strtolower($second->getText()));
 			}
 
-			// otherwise sort by order
-			return (int) ($first->getOrder() > $second->getOrder());
+			// otherwise sort by numeric order (ascending)
+			return $first->getOrder() <=> $second->getOrder();
 		});
 
 		return $sorted;
