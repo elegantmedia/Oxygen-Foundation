@@ -118,7 +118,10 @@ return $config->setRules([
     'phpdoc_separation' => true,
     'phpdoc_single_line_var_spacing' => true,
     'phpdoc_summary' => true,
-    'phpdoc_to_comment' => true,
+    // Keep inline @var and @phpstan-var assertions used for macro typing
+    'phpdoc_to_comment' => [
+        'ignored_tags' => ['var', 'phpstan-var']
+    ],
     'phpdoc_trim' => true,
     'phpdoc_trim_consecutive_blank_line_separation' => true,
     'phpdoc_types' => true,
