@@ -310,9 +310,10 @@ abstract class ExtensionInstallCommand extends Command implements ExtensionSetup
 	}
 
 	/**
-	 * Install the Fortify service providers in the application configuration file.
+	 * Append required service providers to the application's provider list.
 	 *
 	 * @throws FileNotFoundException
+	 * @throws FileInvalidException
 	 */
 	protected function appendServiceProviders(): void
 	{
@@ -320,10 +321,12 @@ abstract class ExtensionInstallCommand extends Command implements ExtensionSetup
 			return;
 		}
 
-		$path = config_path('app.php');
+		// Laravel 12 registers providers via `bootstrap/providers.php`
+		$path = base_path('bootstrap/providers.php');
 
 		$shortlisted = [];
 		foreach ($this->requiredServiceProviders as $serviceProvider) {
+			$serviceProvider = preg_replace('/::class\s*$/', '', $serviceProvider);
 			if (! FileEditor::isTextInFile($path, $serviceProvider)) {
 				$shortlisted[] = $serviceProvider . '::class';
 			}
@@ -333,15 +336,30 @@ abstract class ExtensionInstallCommand extends Command implements ExtensionSetup
 			return;
 		}
 
-		array_unshift($shortlisted, 'App\Providers\RouteServiceProvider::class');
+		$contents = file_get_contents($path);
+		if ($contents === false) {
+			throw new FileInvalidException("Failed to read `$path`.");
+		}
 
-		$append = implode(',' . PHP_EOL . "\t\t", $shortlisted) . ',';
+		// Detect indentation used for array entries; default to 4 spaces.
+		$indent = '    ';
+		if (preg_match('/return\s*\[\s*(?:\r\n|\r|\n)([ \t]+)/', $contents, $matches)) {
+			$indent = $matches[1];
+		}
 
-		FileEditor::findAndReplace(
-			$path,
-			"App\\Providers\RouteServiceProvider::class,",
-			$append
-		);
+		$append = $indent . implode(',' . PHP_EOL . $indent, $shortlisted) . ',' . PHP_EOL;
+
+		if (! preg_match_all('/^[ \t]*\];[ \t]*$/m', $contents, $closingMatches, PREG_OFFSET_CAPTURE)) {
+			throw new FileInvalidException("Unable to locate the end of the providers array in `$path`.");
+		}
+
+		$closingOffset = end($closingMatches[0])[1];
+
+		$newContents = substr($contents, 0, $closingOffset) . $append . substr($contents, $closingOffset);
+
+		if (file_put_contents($path, $newContents) === false) {
+			throw new FileInvalidException("Failed to update `$path`.");
+		}
 	}
 
 	/**
