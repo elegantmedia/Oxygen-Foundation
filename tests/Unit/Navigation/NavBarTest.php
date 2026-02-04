@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace ElegantMedia\OxygenFoundation\Components\Navigator;
+namespace ElegantMedia\OxygenFoundation\Tests\Unit\Navigation;
 
 use ElegantMedia\OxygenFoundation\Facades\Navigator;
 use ElegantMedia\OxygenFoundation\Navigation\NavItem;
-use ElegantMedia\OxygenFoundation\Tests\Feature\TestCase;
+use ElegantMedia\OxygenFoundation\Tests\TestCase;
 
 class NavBarTest extends TestCase
 {
@@ -114,5 +114,75 @@ class NavBarTest extends TestCase
 		];
 
 		$this->assertSame($expected, $sorted->pluck('text')->all());
+	}
+
+	public function testNavBarCanFindItemRecursively(): void
+	{
+		$parent = new NavItem('Parent');
+		$parent->setId('parent-id');
+
+		$child = new NavItem('Child');
+		$child->setId('child-id');
+
+		$grandchild = new NavItem('Grandchild');
+		$grandchild->setId('grandchild-id');
+
+		$child->addChild($grandchild);
+		$parent->addChild($child);
+
+		Navigator::addItem($parent);
+
+		$navBar = Navigator::getNavBar();
+
+		$foundParent = $navBar->getItemRecursive('parent-id');
+		$this->assertNotNull($foundParent);
+		$this->assertEquals('Parent', $foundParent->getText());
+
+		$foundChild = $navBar->getItemRecursive('child-id');
+		$this->assertNotNull($foundChild);
+		$this->assertEquals('Child', $foundChild->getText());
+
+		$foundGrandchild = $navBar->getItemRecursive('grandchild-id');
+		$this->assertNotNull($foundGrandchild);
+		$this->assertEquals('Grandchild', $foundGrandchild->getText());
+
+		$notFound = $navBar->getItemRecursive('nonexistent');
+		$this->assertNull($notFound);
+	}
+
+	public function testNavigatorCanAddChildItem(): void
+	{
+		$parent = new NavItem('Parent');
+		$parent->setId('parent-id');
+
+		Navigator::addItem($parent);
+
+		$child = new NavItem('Child');
+		Navigator::addChildItem($child, 'parent-id');
+
+		$navBar = Navigator::getNavBar();
+		$foundParent = $navBar->getItem('parent-id');
+
+		$this->assertTrue($foundParent->hasChildren());
+		$this->assertEquals('Child', $foundParent->getChildren()->first()->getText());
+	}
+
+	public function testNavigatorCanHideNestedItems(): void
+	{
+		$parent = new NavItem('Parent');
+		$parent->setId('parent-id');
+
+		$child = new NavItem('Child');
+		$child->setId('child-id');
+
+		$parent->addChild($child);
+		Navigator::addItem($parent);
+
+		Navigator::hideItem('child-id');
+
+		$navBar = Navigator::getNavBar();
+		$foundChild = $navBar->getItemRecursive('child-id');
+
+		$this->assertTrue($foundChild->isHidden());
 	}
 }

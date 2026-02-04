@@ -63,6 +63,48 @@ class NavBar
 		});
 	}
 
+	/**
+	 * Find an item by ID, searching recursively through all children.
+	 */
+	public function getItemRecursive(string $itemId): ?NavItem
+	{
+		foreach ($this->items as $item) {
+			if ($item->getId() === $itemId) {
+				return $item;
+			}
+
+			if ($item->hasChildren()) {
+				$found = $this->findInChildren($item, $itemId);
+				if ($found) {
+					return $found;
+				}
+			}
+		}
+
+		return null;
+	}
+
+	/**
+	 * Recursively search for an item in children.
+	 */
+	protected function findInChildren(NavItem $parent, string $itemId): ?NavItem
+	{
+		foreach ($parent->getChildren() as $child) {
+			if ($child->getId() === $itemId) {
+				return $child;
+			}
+
+			if ($child->hasChildren()) {
+				$found = $this->findInChildren($child, $itemId);
+				if ($found) {
+					return $found;
+				}
+			}
+		}
+
+		return null;
+	}
+
 	public function setName(string $name): NavBar
 	{
 		$this->name = $name;
