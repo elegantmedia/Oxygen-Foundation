@@ -98,13 +98,12 @@ class ApiClient extends Model
 ```
 
 Deprecated: `CreatesUniqueTokens` is kept for BC but should be replaced with `HasSecureToken`.
-```
 
 ### Components
 
 #### Menu Navigator
 
-Navigation documentation has moved to `docs/reference/Navigation.md`.
+[Navigation Menu Developer Guide](`docs/references/Navigation.md`)
 
 ### Schema Macros
 
