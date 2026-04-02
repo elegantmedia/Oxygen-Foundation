@@ -3,20 +3,9 @@
 [![Latest Version on Packagist][ico-version]][link-packagist]
 [![Software License][ico-license]](LICENSE.md)
 
-### Version Compatibility
+## Version Compatibility and Upgrading
 
-| Laravel Version | This Package Version |       Branch | PHP Version |
-|----------------:|---------------------:|-------------:|------------:|
-|             v12 |                  5.x |          5.x |     ^8.2    |
-|             v10 |                  3.x |          3.x |     ^8.1    |
-|              v9 |                  2.x |          2.x |     ^8.0    |
-|              v8 |                  1.x | version/v1.x |     ^7.3    |
-
-See [CHANGE LOG](CHANGELOG.md) for change history.
-
-## Upgrading
-
-If you're upgrading from v4 to v5, please review the [CHANGELOG](CHANGELOG.md) for notable changes and upgrade notes.
+If you're upgrading or want to find an older version, please review the [CHANGELOG](CHANGELOG.md) for notable changes and upgrade notes.
 
 ## Install
 
@@ -109,116 +98,12 @@ class ApiClient extends Model
 ```
 
 Deprecated: `CreatesUniqueTokens` is kept for BC but should be replaced with `HasSecureToken`.
-```
 
 ### Components
 
 #### Menu Navigator
 
-You can use the `Navigator` to create Navigation Menus that can be used across the application. The `Navigator` only stores the data and doesn't actually render a menu.
-
-The `Navigator` can be used by any package to register navigation menu items. By default, all menu items will be added to a `NavBar` named `default`.
-
-``` php
-use \ElegantMedia\OxygenFoundation\Navigation\NavItem;
-use \ElegantMedia\OxygenFoundation\Facades\Navigator;
-
-// Create a NavItem
-$navItem = new NavItem('Profile');
-$navItem->setResource('admin.users.index')
-        ->setOrder(2)
-        ->setClass('fas fa-users');
-
-// Add to default NavBar
-Navigator::addItem($navItem);
-
-// Add to a custom navbar
-Navigator::addItem($navItem, 'second-navbar');
-```
-
-Fetching the Menu Items
-``` php
-// Get the Navigator instance
-$navigator = \Navigator::get();
-
-// Get all NavItems for the default NavBar
-$items = \Navigator::items();
-
-// Get all NavItems for a custom NavBar
-$items = \Navigator::items('second-navbar');
-```
-
-NavItem Properties
-
-These are a few examples of available properties.
-
-``` php
-$navItem = new NavItem();
-
-// Set displayed text
-$navItem->setText('My Profile');
-
-// Set URL
-$navItem->setUrl('/profile');
-
-// Set Route Resource By Name
-$navItem->setResource('view.profile');
-
-// Set Class
-$navItem->setClass('menu-lg');
-
-// Set Icon Class
-$navItem->setIconClass('fas fa-users');
-
-// Set Item Order
-$navItem->setOrder(2);
-
-// Set Item ID (useful if you need to fetch the same item later)
-// By default, the ID will be the URL
-$navItem->setId('my-unique-id-1234');
-```
-
-Hide Menu Items
-
-You can explicitly hide menu items from all users by marking an item as hidden. Or you can use the Navigator class.
-
-``` php
-// Get the Navigator instance
-$navigator = \Navigator::get();
-
-// Hide an item from the default menu. You have to pass the Item ID, which is the URL by default.
-\Navigator::hideItem('/projects');
-
-// Hiden an item from another menu
-\Navigator::hideItem('/settings', 'second-menu-name');
-```
-
-Example on how to render Navigation within a Blade template
-
-``` php
-<ul>
-    @foreach (\Navigator::getNavBar('default')->items() as $item)
-        @if ($item->isUserAllowedToSee())
-            <li>
-                @if ($item->hasUrl())
-                    <a href="{{ $item->getUrl() }}">
-                        @endif
-                        @if ($item->hasIcon())
-                            <i class="{{ $item->icon_class }}"></i>
-                        @endif
-                        <span>{{ $item->text }}</span>
-                        @if ($item->hasUrl())
-                    </a>
-                @endif
-            </li>
-        @endif
-    @endforeach
-</ul>
-```
-
-Notes
-- Items are ordered by `order` (ascending) and then by `text` for ties.
-- You can gate visibility per item using `$item->permission` and `isUserAllowedToSee()`.
+[Navigation Menu Developer Guide](`docs/references/Navigation.md`)
 
 ### Schema Macros
 

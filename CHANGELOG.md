@@ -22,6 +22,14 @@ Use versions as below.
 - Fixed validation in controller traits to use Request::validate for Laravel 12 compatibility
 - Secured legacy CreatesUniqueTokens logic and added high-resolution timestamp tokens; improved HasSecureToken timestamp precision
 - Completed HasUuid contract: trait now provides getUuidColumn() and findByUuid()
+- Navigation enhancements:
+  - Added `setId()` method to NavItem
+  - Added active state tracking with `isActive()`, `setActive()`, `setActiveClass()`, `getActiveClass()`
+  - Added nested menu items support with `addChild()`, `getChildren()`, `hasChildren()`, `setParent()`, `getParent()`, `hasVisibleChildren()`
+  - Added recursive item retrieval with `NavBar::getItemRecursive()`
+  - Added `Navigator::addChildItem()` helper method
+  - Updated `Navigator::hideItem()` to work with nested items
+  - Updated `toArray()` to include computed values (id, url, active, active_class, children)
 
 ## v3.0.0
 - Illuminate 10 Support

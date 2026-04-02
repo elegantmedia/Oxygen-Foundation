@@ -81,11 +81,26 @@ class Navigator
 	{
 		$navBar = $this->getNavBar($navBarName);
 
-		$navItem = $navBar->getItem($itemId);
+		$navItem = $navBar->getItemRecursive($itemId);
 
 		if ($navItem) {
 			$navItem->setHidden(true);
 		}
+	}
+
+	/**
+	 * Add a child item to an existing nav item.
+	 */
+	public function addChildItem(NavItem $child, string $parentId, string $navBarName = self::DEFAULT_NAME): self
+	{
+		$navBar = $this->getNavBar($navBarName);
+		$parent = $navBar->getItemRecursive($parentId);
+
+		if ($parent) {
+			$parent->addChild($child);
+		}
+
+		return $this;
 	}
 
 	/**

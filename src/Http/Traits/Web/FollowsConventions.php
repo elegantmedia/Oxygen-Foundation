@@ -6,7 +6,7 @@ namespace ElegantMedia\OxygenFoundation\Http\Traits\Web;
 
 use ElegantMedia\OxygenFoundation\Entities\OxygenRepository;
 use ElegantMedia\PHPToolkit\Arr;
-use ElegantMedia\SimpleRepository\Search\Filterable;
+use ElegantMedia\SimpleRepository\Search\Contracts\FilterableInterface;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -143,7 +143,7 @@ trait FollowsConventions
 	/**
 	 * @param bool $withDefaults
 	 */
-	protected function newSearchFilter($withDefaults = true): Filterable
+	protected function newSearchFilter($withDefaults = true): FilterableInterface
 	{
 		return $this->repo->newSearchFilter($withDefaults);
 	}

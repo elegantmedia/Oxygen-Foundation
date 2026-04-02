@@ -5,6 +5,8 @@
          colors="true"
          cacheDirectory=".phpunit.cache"
          executionOrder="depends,defects"
+         displayDetailsOnTestsThatTriggerDeprecations="true"
+         displayDetailsOnPhpunitDeprecations="true"
          requireCoverageMetadata="false"
          beStrictAboutCoverageMetadata="false"
          beStrictAboutOutputDuringTests="true"

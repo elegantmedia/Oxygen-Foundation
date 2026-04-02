@@ -7,6 +7,7 @@ namespace ElegantMedia\OxygenFoundation\Navigation;
 use ElegantMedia\PHPToolkit\Types\HasAttributes;
 use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
 use Illuminate\Contracts\Support\Arrayable;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 
 /**
@@ -19,10 +20,15 @@ use Illuminate\Support\Facades\Auth;
  * @property int    $order      Sort order
  * @property bool   $hidden     Is hidden?
  * @property string $permission Required permission
+ * @property bool|null $active  Is active? (null = auto-detect)
+ * @property string $active_class CSS class to apply when active
+ * @property Collection $children Child NavItems
  */
 class NavItem implements Arrayable
 {
 	use HasAttributes;
+
+	protected ?NavItem $parent = null;
 
 	public function __construct($attributes = null)
 	{
@@ -94,16 +100,25 @@ class NavItem implements Arrayable
 	 */
 	public function toArray(): array
 	{
-		return [
-			'id' => $this->id,
+		$array = [
+			'id' => $this->getId(),
 			'text' => $this->text,
-			'url' => $this->url,
+			'url' => $this->getUrl(),
 			'resource' => $this->resource,
 			'class' => $this->class,
+			'icon_class' => $this->icon_class,
 			'order' => $this->order,
 			'permission' => $this->permission,
 			'hidden' => $this->hidden,
+			'active' => $this->isActive(),
+			'active_class' => $this->getActiveClass(),
 		];
+
+		if ($this->hasChildren()) {
+			$array['children'] = $this->getChildren()->map(fn (NavItem $child) => $child->toArray())->values()->all();
+		}
+
+		return $array;
 	}
 
 	/*
@@ -246,6 +261,16 @@ class NavItem implements Arrayable
 	}
 
 	/**
+	 * @param string $id
+	 */
+	public function setId(string $id): self
+	{
+		$this->attributes['id'] = $id;
+
+		return $this;
+	}
+
+	/**
 	 * @return string|null
 	 */
 	public function getClass(): ?string
@@ -263,5 +288,187 @@ class NavItem implements Arrayable
 	public function isHidden(): bool
 	{
 		return $this->hidden;
+	}
+
+	/*
+	 |-----------------------------------------------------------
+	 | Active State
+	 |-----------------------------------------------------------
+	 */
+
+	/**
+	 * Check if the nav item is currently active.
+	 * Auto-detects based on current URL/route if not manually set.
+	 */
+	public function isActive(): bool
+	{
+		// If manually set, use that value
+		if (isset($this->attributes['active'])) {
+			return (bool) $this->attributes['active'];
+		}
+
+		if (! function_exists('app') || ! function_exists('request')) {
+			return false;
+		}
+
+		$app = app();
+
+		if (! is_object($app) || ! method_exists($app, 'runningInConsole') || $app->runningInConsole()) {
+			return false;
+		}
+
+		if (! method_exists($app, 'bound') || ! $app->bound('request')) {
+			return false;
+		}
+
+		$request = request();
+
+		if (! is_object($request)) {
+			return false;
+		}
+
+		// Prefer route-name matching when a resource is set
+		if ($this->hasResource() && method_exists($request, 'route') && method_exists($request, 'routeIs')) {
+			$pattern = str_ends_with($this->resource, '*') ? $this->resource : $this->resource . '*';
+
+			if ($request->route() && $request->routeIs($pattern)) {
+				return true;
+			}
+		}
+
+		// Check if item URL matches current URL
+		if ($this->hasUrl() && method_exists($request, 'getPathInfo')) {
+			$itemUrl = (string) $this->getUrl();
+
+			// Normalize to path comparison (supports absolute and relative URLs)
+			$itemPath = parse_url($itemUrl, PHP_URL_PATH) ?: $itemUrl;
+			$currentPath = $request->getPathInfo(); // always starts with "/"
+
+			$itemPath = rtrim($itemPath, '/') ?: '/';
+			$currentPath = rtrim($currentPath, '/') ?: '/';
+
+			// Exact match or segment-aware prefix match
+			if ($itemPath === $currentPath || ($itemPath !== '/' && str_starts_with($currentPath, $itemPath . '/'))) {
+				return true;
+			}
+		}
+
+		// Check if any child is active (recursive)
+		if ($this->hasChildren()) {
+			foreach ($this->getChildren() as $child) {
+				if ($child->isActive()) {
+					return true;
+				}
+			}
+		}
+
+		return false;
+	}
+
+	/**
+	 * Manually set the active state.
+	 */
+	public function setActive(bool $active): self
+	{
+		$this->attributes['active'] = $active;
+
+		return $this;
+	}
+
+	/**
+	 * Get the CSS class to apply when active.
+	 */
+	public function getActiveClass(): ?string
+	{
+		return $this->active_class ?? null;
+	}
+
+	/**
+	 * Set the CSS class to apply when active.
+	 */
+	public function setActiveClass(string $class): self
+	{
+		$this->attributes['active_class'] = $class;
+
+		return $this;
+	}
+
+	/*
+	 |-----------------------------------------------------------
+	 | Children / Nested Items
+	 |-----------------------------------------------------------
+	 */
+
+	/**
+	 * Add a child nav item.
+	 */
+	public function addChild(NavItem $item): self
+	{
+		if (! isset($this->attributes['children'])) {
+			$this->attributes['children'] = new Collection();
+		}
+
+		$item->setParent($this);
+		$this->attributes['children']->push($item);
+
+		return $this;
+	}
+
+	/**
+	 * Get all child nav items, sorted by order then text.
+	 */
+	public function getChildren(): Collection
+	{
+		if (! isset($this->attributes['children'])) {
+			return new Collection();
+		}
+
+		return $this->attributes['children']->sortBy(function (NavItem $item) {
+			return [$item->getOrder(), strtolower($item->getText())];
+		})->values();
+	}
+
+	/**
+	 * Check if this item has children.
+	 */
+	public function hasChildren(): bool
+	{
+		return isset($this->attributes['children']) && $this->attributes['children']->count() > 0;
+	}
+
+	/**
+	 * Set the parent nav item.
+	 */
+	public function setParent(NavItem $parent): self
+	{
+		$this->parent = $parent;
+
+		return $this;
+	}
+
+	/**
+	 * Get the parent nav item.
+	 */
+	public function getParent(): ?NavItem
+	{
+		return $this->parent;
+	}
+
+	/**
+	 * Check if any child is visible to the user.
+	 */
+	public function hasVisibleChildren(): bool
+	{
+		if (! $this->hasChildren()) {
+			return false;
+		}
+
+		foreach ($this->getChildren() as $child) {
+			if ($child->isUserAllowedToSee()) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 }

@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace ElegantMedia\OxygenFoundation\Http\Traits\Web;
 
+use ElegantMedia\SimpleRepository\Search\Contracts\FilterableInterface;
+
 trait CanBrowse
 {
 	/**
 	 * Index Results filter. Override this method to customise the results.
 	 */
-	protected function getIndexFilter(): \ElegantMedia\SimpleRepository\Search\Filterable
+	protected function getIndexFilter(): FilterableInterface
 	{
 		$filter = $this->repo->newSearchFilter(true);
 
