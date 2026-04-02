@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace ElegantMedia\OxygenFoundation\Http\Traits\Controllers;
 
 use ElegantMedia\OxygenFoundation\Repository\BaseRepository;
-use ElegantMedia\SimpleRepository\Search\Filterable;
+use ElegantMedia\SimpleRepository\Search\Contracts\FilterableInterface;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -136,7 +136,7 @@ trait FollowsResourceConventions
 		return $this->repo->fillModelFromRequest($request, $id);
 	}
 
-	protected function newSearchFilter(bool $withDefaults = true): Filterable
+	protected function newSearchFilter(bool $withDefaults = true): FilterableInterface
 	{
 		return $this->repo->newSearchFilter($withDefaults);
 	}

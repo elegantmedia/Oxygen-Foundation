@@ -6,6 +6,7 @@ namespace ElegantMedia\OxygenFoundation\Repository;
 
 use ElegantMedia\OxygenFoundation\Contracts\RepositoryInterface;
 use ElegantMedia\SimpleRepository\Repository\BaseRepository as SimpleRepository;
+use ElegantMedia\SimpleRepository\Search\Contracts\FilterableInterface;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
@@ -48,5 +49,13 @@ abstract class BaseRepository extends SimpleRepository implements RepositoryInte
 		}
 
 		return $entity->isDirty() ? $entity->refresh() : $entity;
+	}
+
+	/**
+	 * Backwards-compatible alias for the SimpleRepository search filter.
+	 */
+	public function newSearchFilter(bool $withDefaults = true): FilterableInterface
+	{
+		return $this->newFilter($withDefaults);
 	}
 }

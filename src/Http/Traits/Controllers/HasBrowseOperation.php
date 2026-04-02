@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace ElegantMedia\OxygenFoundation\Http\Traits\Controllers;
 
-use ElegantMedia\SimpleRepository\Search\Filterable;
+use ElegantMedia\SimpleRepository\Search\Contracts\FilterableInterface;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
 
@@ -13,7 +13,7 @@ trait HasBrowseOperation
 	/**
 	 * Index Results filter. Override this method to customise the results.
 	 */
-	protected function getIndexFilter(): Filterable
+	protected function getIndexFilter(): FilterableInterface
 	{
 		$filter = $this->repo->newSearchFilter(true);
 
