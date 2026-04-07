@@ -10,6 +10,7 @@ interface DeviceAuthenticatorContract
 	 * Return a valid access token for a given user ID.
 	 *
 	 * @param mixed $userId
+	 *
 	 * @return string|null
 	 */
 	public function getAnAccessTokenForUserId($userId);
@@ -18,6 +19,7 @@ interface DeviceAuthenticatorContract
 	 * Returns a user by a given access token (from request headers).
 	 *
 	 * @param bool $throwNotFoundException
+	 *
 	 * @return mixed|null
 	 */
 	public function getUserByAccessToken($throwNotFoundException = true);
@@ -27,6 +29,7 @@ interface DeviceAuthenticatorContract
 	 *
 	 * @param mixed $deviceId
 	 * @param mixed $userId
+	 *
 	 * @return string|null
 	 */
 	public function getTokenByDeviceByUser($deviceId, $userId);
@@ -38,6 +41,7 @@ interface DeviceAuthenticatorContract
 	 * @param mixed $deviceType
 	 * @param mixed $devicePushToken
 	 * @param mixed $userId
+	 *
 	 * @return string|null
 	 */
 	public function setToken($deviceId, $deviceType, $devicePushToken, $userId);
@@ -46,6 +50,7 @@ interface DeviceAuthenticatorContract
 	 * Find a device by access token.
 	 *
 	 * @param mixed $accessToken
+	 *
 	 * @return mixed|null
 	 */
 	public function findDeviceByToken($accessToken);
@@ -54,6 +59,7 @@ interface DeviceAuthenticatorContract
 	 * Validate to see if a token exists.
 	 *
 	 * @param mixed $accessToken
+	 *
 	 * @return bool
 	 */
 	public function validateToken($accessToken);
@@ -61,8 +67,9 @@ interface DeviceAuthenticatorContract
 	/**
 	 * Delete a device by token or device ID.
 	 *
-	 * @param mixed $deviceId
+	 * @param mixed      $deviceId
 	 * @param mixed|null $accessToken
+	 *
 	 * @return bool
 	 */
 	public function deleteByToken($deviceId, $accessToken = null);

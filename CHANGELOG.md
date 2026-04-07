@@ -6,10 +6,19 @@ Use versions as below.
 
 | Laravel Version | This Package Version |       Branch |
 |----------------:|---------------------:|-------------:|
+|             v13 |                  6.x |          6.x |
 |             v12 |                  5.x |          5.x |
 |             v10 |                  3.x |       master |  
 |              v9 |                  2.x |          2.x |  
 |              v8 |                  1.x | version/v1.x | 
+
+## v6.0.0
+- Laravel 13 support
+- Requires PHP ^8.3
+- Upgraded `elegantmedia/laravel-simple-repository` to v6.0
+- Upgraded `laravel/scout` to v11
+- Upgraded package testing stack to `orchestra/testbench` v11
+- Updated CI matrix to Laravel 13 with PHP 8.3 and 8.4
 
 ## v5.0.0
 - Illuminate 12 Support

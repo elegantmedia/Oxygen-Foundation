@@ -23,7 +23,7 @@ trait HasSecureToken
 		while ($attempts < $maxAttempts) {
 			$token = Str::random($length);
 
-			if (! static::where($field, $token)->exists()) {
+			if (! static::query()->where($field, $token)->exists()) {
 				return $token;
 			}
 
@@ -50,7 +50,7 @@ trait HasSecureToken
 			$timestamp = base_convert((string) hrtime(true), 10, 36);
 			$token = $timestamp . '_' . Str::random($randomLength);
 
-			if (! static::where($field, $token)->exists()) {
+			if (! static::query()->where($field, $token)->exists()) {
 				return $token;
 			}
 
@@ -75,7 +75,7 @@ trait HasSecureToken
 		while ($attempts < $maxAttempts) {
 			$token = rtrim(strtr(base64_encode(random_bytes($length)), '+/', '-_'), '=');
 
-			if (! static::where($field, $token)->exists()) {
+			if (! static::query()->where($field, $token)->exists()) {
 				return $token;
 			}
 

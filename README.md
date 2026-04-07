@@ -7,12 +7,17 @@
 
 If you're upgrading or want to find an older version, please review the [CHANGELOG](CHANGELOG.md) for notable changes and upgrade notes.
 
+| Laravel Version | Package Version | PHP Version | Branch |
+|----------------:|----------------:|------------:|-------:|
+|             v13 |             6.x |       ^8.3  |    6.x |
+|             v12 |             5.x |       ^8.2  |    5.x |
+
 ## Install
 
 Install via Composer
 
 ``` bash
-composer require elegantmedia/oxygen-foundation
+composer require elegantmedia/oxygen-foundation:^6.0
 ```
 
 Install the Foundation
@@ -72,6 +77,7 @@ class Car extends Model implements KeywordSearchable
 // config(['scout.driver' => 'keyword']);
 // Then perform a search:
 // Car::search('tesla')->get();
+```
 
 Note: The package registers a secure in-database Scout engine under the `keyword` driver.
 Implementing `getSearchableFields()` is required for searchable models.
@@ -103,7 +109,7 @@ Deprecated: `CreatesUniqueTokens` is kept for BC but should be replaced with `Ha
 
 #### Menu Navigator
 
-[Navigation Menu Developer Guide](`docs/references/Navigation.md`)
+[Navigation Menu Developer Guide](docs/references/Navigation.md)
 
 ### Schema Macros
 

@@ -66,6 +66,6 @@ trait HasUuid
 	 */
 	public static function findByUuid(string $uuid): ?self
 	{
-		return static::where('uuid', $uuid)->first();
+		return static::query()->where('uuid', $uuid)->first();
 	}
 }

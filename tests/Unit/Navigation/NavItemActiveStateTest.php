@@ -36,7 +36,7 @@ class NavItemActiveStateTest extends TestCase
 	*/
 
 	#[Test]
-	public function exact_url_match_is_active(): void
+	public function exactUrlMatchIsActive(): void
 	{
 		$this->app['router']->get('/dashboard', function () {
 			$item = new NavItem('Dashboard');
@@ -49,7 +49,7 @@ class NavItemActiveStateTest extends TestCase
 	}
 
 	#[Test]
-	public function url_no_match_is_not_active(): void
+	public function urlNoMatchIsNotActive(): void
 	{
 		$this->app['router']->get('/dashboard', function () {
 			$item = new NavItem('Settings');
@@ -62,7 +62,7 @@ class NavItemActiveStateTest extends TestCase
 	}
 
 	#[Test]
-	public function prefix_match_is_active(): void
+	public function prefixMatchIsActive(): void
 	{
 		$this->app['router']->get('/dashboard/analytics', function () {
 			$item = new NavItem('Dashboard');
@@ -75,7 +75,7 @@ class NavItemActiveStateTest extends TestCase
 	}
 
 	#[Test]
-	public function segment_aware_no_partial_word_match(): void
+	public function segmentAwareNoPartialWordMatch(): void
 	{
 		$this->app['router']->get('/user-settings', function () {
 			$item = new NavItem('User');
@@ -88,7 +88,7 @@ class NavItemActiveStateTest extends TestCase
 	}
 
 	#[Test]
-	public function segment_aware_no_partial_word_match_plural(): void
+	public function segmentAwareNoPartialWordMatchPlural(): void
 	{
 		$this->app['router']->get('/username-check', function () {
 			$item = new NavItem('Users');
@@ -101,7 +101,7 @@ class NavItemActiveStateTest extends TestCase
 	}
 
 	#[Test]
-	public function root_path_exact_match_is_active(): void
+	public function rootPathExactMatchIsActive(): void
 	{
 		$this->app['router']->get('/', function () {
 			$item = new NavItem('Home');
@@ -114,7 +114,7 @@ class NavItemActiveStateTest extends TestCase
 	}
 
 	#[Test]
-	public function root_path_does_not_prefix_match_other_paths(): void
+	public function rootPathDoesNotPrefixMatchOtherPaths(): void
 	{
 		$this->app['router']->get('/dashboard', function () {
 			$item = new NavItem('Home');
@@ -127,7 +127,7 @@ class NavItemActiveStateTest extends TestCase
 	}
 
 	#[Test]
-	public function trailing_slash_is_normalized(): void
+	public function trailingSlashIsNormalized(): void
 	{
 		$this->app['router']->get('/dashboard', function () {
 			$item = new NavItem('Dashboard');
@@ -140,7 +140,7 @@ class NavItemActiveStateTest extends TestCase
 	}
 
 	#[Test]
-	public function absolute_url_extracts_path_for_matching(): void
+	public function absoluteUrlExtractsPathForMatching(): void
 	{
 		$this->app['router']->get('/dashboard', function () {
 			$item = new NavItem('Dashboard');
@@ -159,7 +159,7 @@ class NavItemActiveStateTest extends TestCase
 	*/
 
 	#[Test]
-	public function exact_route_name_match_is_active(): void
+	public function exactRouteNameMatchIsActive(): void
 	{
 		$this->app['router']->get('/users', function () {
 			$item = new NavItem('Users');
@@ -172,7 +172,7 @@ class NavItemActiveStateTest extends TestCase
 	}
 
 	#[Test]
-	public function route_name_wildcard_matches_index(): void
+	public function routeNameWildcardMatchesIndex(): void
 	{
 		$this->app['router']->get('/users', function () {
 			$item = new NavItem('Users');
@@ -185,7 +185,7 @@ class NavItemActiveStateTest extends TestCase
 	}
 
 	#[Test]
-	public function route_name_wildcard_matches_create(): void
+	public function routeNameWildcardMatchesCreate(): void
 	{
 		$this->app['router']->get('/users/create', function () {
 			$item = new NavItem('Users');
@@ -198,7 +198,7 @@ class NavItemActiveStateTest extends TestCase
 	}
 
 	#[Test]
-	public function route_name_wildcard_matches_show(): void
+	public function routeNameWildcardMatchesShow(): void
 	{
 		$this->app['router']->get('/users/1', function () {
 			$item = new NavItem('Users');
@@ -211,7 +211,7 @@ class NavItemActiveStateTest extends TestCase
 	}
 
 	#[Test]
-	public function route_name_wildcard_matches_edit(): void
+	public function routeNameWildcardMatchesEdit(): void
 	{
 		$this->app['router']->get('/users/1/edit', function () {
 			$item = new NavItem('Users');
@@ -224,7 +224,7 @@ class NavItemActiveStateTest extends TestCase
 	}
 
 	#[Test]
-	public function route_name_no_match_is_not_active(): void
+	public function routeNameNoMatchIsNotActive(): void
 	{
 		$this->app['router']->get('/users', function () {
 			$item = new NavItem('Products');
@@ -243,7 +243,7 @@ class NavItemActiveStateTest extends TestCase
 	*/
 
 	#[Test]
-	public function parent_is_active_when_child_matches(): void
+	public function parentIsActiveWhenChildMatches(): void
 	{
 		$this->app['router']->get('/dashboard/analytics', function () {
 			$parent = new NavItem('Parent');
@@ -265,7 +265,7 @@ class NavItemActiveStateTest extends TestCase
 	}
 
 	#[Test]
-	public function parent_is_active_when_grandchild_matches(): void
+	public function parentIsActiveWhenGrandchildMatches(): void
 	{
 		$this->app['router']->get('/reports/sales', function () {
 			$grandparent = new NavItem('Grandparent');
@@ -296,7 +296,7 @@ class NavItemActiveStateTest extends TestCase
 	}
 
 	#[Test]
-	public function parent_with_own_url_is_active_via_child(): void
+	public function parentWithOwnUrlIsActiveViaChild(): void
 	{
 		$this->app['router']->get('/dashboard/analytics', function () {
 			$parent = new NavItem('Parent');
@@ -318,7 +318,7 @@ class NavItemActiveStateTest extends TestCase
 	}
 
 	#[Test]
-	public function parent_not_active_when_no_child_matches(): void
+	public function parentNotActiveWhenNoChildMatches(): void
 	{
 		$this->app['router']->get('/dashboard', function () {
 			$parent = new NavItem('Parent');
@@ -346,7 +346,7 @@ class NavItemActiveStateTest extends TestCase
 	*/
 
 	#[Test]
-	public function set_active_true_overrides_url_mismatch(): void
+	public function setActiveTrueOverridesUrlMismatch(): void
 	{
 		$this->app['router']->get('/dashboard', function () {
 			$item = new NavItem('Settings');
@@ -360,7 +360,7 @@ class NavItemActiveStateTest extends TestCase
 	}
 
 	#[Test]
-	public function set_active_false_overrides_url_match(): void
+	public function setActiveFalseOverridesUrlMatch(): void
 	{
 		$this->app['router']->get('/dashboard', function () {
 			$item = new NavItem('Dashboard');
@@ -374,7 +374,7 @@ class NavItemActiveStateTest extends TestCase
 	}
 
 	#[Test]
-	public function set_active_works_without_http_context(): void
+	public function setActiveWorksWithoutHttpContext(): void
 	{
 		$item = new NavItem('Test');
 		$item->setActive(true);
@@ -385,7 +385,7 @@ class NavItemActiveStateTest extends TestCase
 	}
 
 	#[Test]
-	public function set_active_false_overrides_matching_children(): void
+	public function setActiveFalseOverridesMatchingChildren(): void
 	{
 		$this->app['router']->get('/dashboard/analytics', function () {
 			$parent = new NavItem('Parent');
@@ -414,7 +414,7 @@ class NavItemActiveStateTest extends TestCase
 	*/
 
 	#[Test]
-	public function nav_item_without_url_or_resource_is_not_active(): void
+	public function navItemWithoutUrlOrResourceIsNotActive(): void
 	{
 		$this->app['router']->get('/dashboard', function () {
 			$item = new NavItem('Test');
@@ -426,7 +426,7 @@ class NavItemActiveStateTest extends TestCase
 	}
 
 	#[Test]
-	public function invalid_resource_with_valid_url_falls_back_to_url(): void
+	public function invalidResourceWithValidUrlFallsBackToUrl(): void
 	{
 		$this->app['router']->get('/dashboard', function () {
 			$item = new NavItem('Dashboard');
@@ -440,7 +440,7 @@ class NavItemActiveStateTest extends TestCase
 	}
 
 	#[Test]
-	public function empty_children_collection_not_active(): void
+	public function emptyChildrenCollectionNotActive(): void
 	{
 		$this->app['router']->get('/dashboard', function () {
 			$item = new NavItem('Test');
@@ -457,7 +457,7 @@ class NavItemActiveStateTest extends TestCase
 	}
 
 	#[Test]
-	public function deeply_nested_child_activates_all_ancestors(): void
+	public function deeplyNestedChildActivatesAllAncestors(): void
 	{
 		$this->app['router']->get('/admin/reports/sales/monthly', function () {
 			$level1 = new NavItem('Admin');

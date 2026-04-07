@@ -10,6 +10,15 @@ use ElegantMedia\OxygenFoundation\Exceptions\TokenGenerationException;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 
+/**
+ * @property string|null     $access_token
+ * @property Carbon|null     $access_token_expires_at
+ * @property string|null     $device_id
+ * @property string|null     $device_push_token
+ * @property string|null     $device_type
+ * @property string|null     $latest_ip_address
+ * @property int|string|null $user_id
+ */
 class Device extends Model
 {
 	use CreatesUniqueTokens;
@@ -156,7 +165,7 @@ class Device extends Model
 			$plainToken = Str::random($length);
 			$hashedToken = static::hashAccessToken($plainToken);
 
-			if (! static::where('access_token', $hashedToken)->exists()) {
+			if (! static::query()->where('access_token', $hashedToken)->exists()) {
 				return [$plainToken, $hashedToken];
 			}
 

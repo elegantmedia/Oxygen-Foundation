@@ -22,7 +22,7 @@ trait CreatesUniqueTokens
 		while ($attempts < $maxAttempts) {
 			$token = Str::random($length);
 
-			if (! static::where($dbFieldName, $token)->exists()) {
+			if (! static::query()->where($dbFieldName, $token)->exists()) {
 				return $token;
 			}
 
@@ -49,7 +49,7 @@ trait CreatesUniqueTokens
 			$timestamp = base_convert((string) hrtime(true), 10, 36);
 			$token = $timestamp . '_' . Str::random($randomLength);
 
-			if (! static::where($dbFieldName, $token)->exists()) {
+			if (! static::query()->where($dbFieldName, $token)->exists()) {
 				return $token;
 			}
 

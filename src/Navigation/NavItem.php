@@ -5,24 +5,25 @@ declare(strict_types=1);
 namespace ElegantMedia\OxygenFoundation\Navigation;
 
 use ElegantMedia\PHPToolkit\Types\HasAttributes;
+use Illuminate\Container\Container;
 use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 
 /**
- * @property string $id         Unique ID of the NavItem
- * @property string $text       Nav Item displayed text
- * @property string $class      CSS class
- * @property string $icon_class Icon class for the item
- * @property string $url        URL for the item
- * @property string $resource   Resource name
- * @property int    $order      Sort order
- * @property bool   $hidden     Is hidden?
- * @property string $permission Required permission
- * @property bool|null $active  Is active? (null = auto-detect)
- * @property string $active_class CSS class to apply when active
- * @property Collection $children Child NavItems
+ * @property string     $id           Unique ID of the NavItem
+ * @property string     $text         Nav Item displayed text
+ * @property string     $class        CSS class
+ * @property string     $icon_class   Icon class for the item
+ * @property string     $url          URL for the item
+ * @property string     $resource     Resource name
+ * @property int        $order        Sort order
+ * @property bool       $hidden       Is hidden?
+ * @property string     $permission   Required permission
+ * @property bool|null  $active       Is active? (null = auto-detect)
+ * @property string     $active_class CSS class to apply when active
+ * @property Collection $children     Child NavItems
  */
 class NavItem implements Arrayable
 {
@@ -311,33 +312,29 @@ class NavItem implements Arrayable
 			return false;
 		}
 
-		$app = app();
+		$app = Container::getInstance();
 
-		if (! is_object($app) || ! method_exists($app, 'runningInConsole') || $app->runningInConsole()) {
+		if (! method_exists($app, 'runningInConsole') || $app->runningInConsole()) {
 			return false;
 		}
 
-		if (! method_exists($app, 'bound') || ! $app->bound('request')) {
+		if (! $app->bound('request')) {
 			return false;
 		}
 
 		$request = request();
 
-		if (! is_object($request)) {
-			return false;
-		}
-
 		// Prefer route-name matching when a resource is set
-		if ($this->hasResource() && method_exists($request, 'route') && method_exists($request, 'routeIs')) {
+		if ($this->hasResource()) {
 			$pattern = str_ends_with($this->resource, '*') ? $this->resource : $this->resource . '*';
 
-			if ($request->route() && $request->routeIs($pattern)) {
+			if ($request->routeIs($pattern)) {
 				return true;
 			}
 		}
 
 		// Check if item URL matches current URL
-		if ($this->hasUrl() && method_exists($request, 'getPathInfo')) {
+		if ($this->hasUrl()) {
 			$itemUrl = (string) $this->getUrl();
 
 			// Normalize to path comparison (supports absolute and relative URLs)
