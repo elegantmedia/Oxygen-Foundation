@@ -224,6 +224,9 @@ abstract class ExtensionInstallCommand extends Command implements ExtensionSetup
 		$command = $packages;
 		array_unshift($command, 'composer', 'require');
 
+		// allow upgrade/downgrade of related dependencies
+		$command[] = '--with-all-dependencies';
+
 		if ($dev) {
 			$command[] = '--dev';
 		}
