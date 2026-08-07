@@ -11,18 +11,18 @@ use Illuminate\Database\Seeder;
 class SeedCommand extends \Illuminate\Database\Console\Seeds\SeedCommand
 {
 	/**
-	 * The console command name.
-	 *
-	 * @var string
-	 */
-	protected $name = 'oxygen:seed';
-
-	/**
 	 * The console command description.
 	 *
 	 * @var string
 	 */
 	protected $description = 'Seed the database with records';
+
+	protected function configure(): void
+	{
+		parent::configure();
+
+		$this->setName('oxygen:seed');
+	}
 
 	/**
 	 * Get a seeder instance from the container.
